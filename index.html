@@ -772,8 +772,8 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
           "-",
           "nehrál",
           0,
-          "0 %",
-          "0.00",
+          "0",
+          "0,00",
           0,
           0,
           0,
@@ -786,7 +786,8 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
       for (const run of student.runs) {
         const dateStr = run.completedAt ? new Date(run.completedAt).toLocaleString("cs-CZ") : "-";
         const resultStr = run.ok ? "úspěch" : "pád";
-        const reactionSec = run.avgReaction ? (run.avgReaction / 1000).toFixed(2) : "0.00";
+        const reactionSec = run.avgReaction ? (run.avgReaction / 1000).toFixed(2).replace(".", ",") : "0,00";
+        const accuracyStr = typeof run.accuracy === "number" ? String(run.accuracy).replace(".", ",") : "0";
         
         const row = [
           room.code,
@@ -796,7 +797,7 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
           run.levelTitle,
           resultStr,
           run.score,
-          run.accuracy,
+          accuracyStr,
           reactionSec,
           run.memoryIndex,
           run.forgettingRisk,

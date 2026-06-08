@@ -325,6 +325,237 @@
         "playerId": "p-9mwigtfh1jpmq501dzc",
         "playerName": "Miloš Mobil",
         "role": "student"
+      },
+      {
+        "id": "0848418b-50e5-4ad6-9dc7-9746db19c643",
+        "at": 1780919712609,
+        "kind": "join",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Miloš Notebook",
+        "role": "student"
+      },
+      {
+        "id": "1effd361-0c0d-4872-8cf1-0e0b0e833be4",
+        "at": 1780919721328,
+        "kind": "join",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš Mobil",
+        "role": "student"
+      },
+      {
+        "id": "55856322-ae6d-4e41-8c43-05bc02377fa1",
+        "at": 1780920026958,
+        "kind": "leave",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš Mobil",
+        "role": "student"
+      },
+      {
+        "id": "68f11c3a-c4b0-4807-9593-0ba820290f36",
+        "at": 1780920026960,
+        "kind": "leave",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš Mobil",
+        "role": "student"
+      },
+      {
+        "id": "1d414044-c3cc-4ffa-863b-5c81a8cf0acc",
+        "at": 1780920331471,
+        "kind": "leave",
+        "playerId": "p-lqr7bw01b2cmq502fjw",
+        "playerName": "Adela Tablet",
+        "role": "student"
+      },
+      {
+        "id": "6eb558c8-163f-4e4c-b564-2149b461b7d3",
+        "at": 1780920331472,
+        "kind": "leave",
+        "playerId": "p-lqr7bw01b2cmq502fjw",
+        "playerName": "Adela Tablet",
+        "role": "student"
+      },
+      {
+        "id": "c85cd5e8-c1bc-41d5-a4d5-decb903e41eb",
+        "at": 1780922837451,
+        "kind": "join",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš Mobil",
+        "role": "student"
+      },
+      {
+        "id": "74fd2b99-fab4-4108-a87f-fbe998b5b0a5",
+        "at": 1780922837456,
+        "kind": "leave",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Miloš Notebook",
+        "role": "student"
+      },
+      {
+        "id": "7020cc24-cc64-45fa-993a-cc14b878b877",
+        "at": 1780922837456,
+        "kind": "leave",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Miloš Notebook",
+        "role": "student"
+      },
+      {
+        "id": "4621d56b-e053-4753-b751-0061778ce1b8",
+        "at": 1780922837457,
+        "kind": "leave",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Miloš Notebook",
+        "role": "student"
+      },
+      {
+        "id": "cc646cfd-fc70-4b84-9851-08c7a33bdaa2",
+        "at": 1780922866863,
+        "kind": "leave",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš Mobil",
+        "role": "student"
+      },
+      {
+        "id": "0554b14e-3b3f-4f75-8060-60453e171164",
+        "at": 1780922866875,
+        "kind": "join",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš Mobil",
+        "role": "student"
+      },
+      {
+        "id": "d72a2ae8-b97a-4d01-b4cb-6278d82061d9",
+        "at": 1780923172763,
+        "kind": "leave",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš Mobil",
+        "role": "student"
+      },
+      {
+        "id": "06c4240e-3a0e-4796-8d0e-98c53ee49bb0",
+        "at": 1780923172763,
+        "kind": "leave",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš Mobil",
+        "role": "student"
+      },
+      {
+        "id": "5df6ac45-2a8b-46fb-98e9-e0bfe41195c6",
+        "at": 1780923389962,
+        "kind": "join",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Miloš Notebook",
+        "role": "student"
+      },
+      {
+        "id": "58632a45-3550-41bb-85ae-b7b0d9e6b218",
+        "at": 1780923442727,
+        "kind": "run-win",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Miloš Notebook",
+        "levelId": 1,
+        "score": 2478,
+        "memoryIndex": 91,
+        "forgettingRisk": 13
+      },
+      {
+        "id": "9c03fff9-fe76-4590-ad27-182018a6fc54",
+        "at": 1780923500690,
+        "kind": "run-win",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Miloš Notebook",
+        "levelId": 2,
+        "score": 1766,
+        "memoryIndex": 78,
+        "forgettingRisk": 43
+      },
+      {
+        "id": "da5d2c53-770b-46c6-9935-c46524f5894c",
+        "at": 1780923559183,
+        "kind": "run-win",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Miloš Notebook",
+        "levelId": 3,
+        "score": 1499,
+        "memoryIndex": 70,
+        "forgettingRisk": 56
+      },
+      {
+        "id": "2ce04c13-a7e7-4831-a7b5-0f6bbd618e55",
+        "at": 1780923633597,
+        "kind": "run-loss",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Miloš Notebook",
+        "levelId": 4,
+        "score": 732,
+        "memoryIndex": 54,
+        "forgettingRisk": 85
+      },
+      {
+        "id": "ebfe6acb-2614-40df-a162-31ad26165c12",
+        "at": 1780923648614,
+        "kind": "join",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš Mobil",
+        "role": "student"
+      },
+      {
+        "id": "4789b78c-d983-4d50-a535-4eb66e9f7d93",
+        "at": 1780923807068,
+        "kind": "run-win",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš Mobil",
+        "levelId": 1,
+        "score": 2222,
+        "memoryIndex": 85,
+        "forgettingRisk": 19
+      },
+      {
+        "id": "2c7fe214-e450-4ba0-85b9-b1c50b97fa26",
+        "at": 1780923817707,
+        "kind": "join",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Student",
+        "role": "teacher"
+      },
+      {
+        "id": "d4d3fc97-bab3-4fae-93b0-c3f0021746af",
+        "at": 1780923837453,
+        "kind": "join",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Student",
+        "role": "teacher"
+      },
+      {
+        "id": "c171ab46-b1aa-4921-8850-492bbbdb0029",
+        "at": 1780923851974,
+        "kind": "join",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Student",
+        "role": "student"
+      },
+      {
+        "id": "86fff66a-ca46-4fd2-b790-aa31e9a4fca1",
+        "at": 1780923880703,
+        "kind": "join",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Miloš Notebook",
+        "role": "student"
+      },
+      {
+        "id": "acacdd19-5d3c-48e8-ab50-dc0fa785571f",
+        "at": 1780924114721,
+        "kind": "leave",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš Mobil",
+        "role": "student"
+      },
+      {
+        "id": "7176d99f-fa40-4349-a92e-3fc70c15156f",
+        "at": 1780924114722,
+        "kind": "leave",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš Mobil",
+        "role": "student"
       }
     ],
     "players": {
@@ -333,7 +564,7 @@
         "name": "Miloš Notebook",
         "role": "student",
         "joinedAt": 1780918404516,
-        "lastSeen": 1780919072807,
+        "lastSeen": 1780923880707,
         "current": {
           "phase": "online",
           "view": "levels",
@@ -346,9 +577,286 @@
           "combo": 0,
           "stability": null,
           "answerIndex": null,
-          "updatedAt": 1780919072818
+          "updatedAt": 1780923880704
         },
-        "runs": []
+        "runs": [
+          {
+            "id": "ec1f54d1-fcd1-481a-aa8c-affbb2117d5c",
+            "runNo": 1,
+            "levelId": 1,
+            "levelTitle": "Teoretické základy",
+            "ok": true,
+            "score": 2478,
+            "accuracy": 100,
+            "avgReaction": 5350,
+            "totalAnswers": 7,
+            "correctAnswers": 7,
+            "wrongAnswers": 0,
+            "hints": 1,
+            "memoryIndex": 91,
+            "forgettingRisk": 13,
+            "durationMs": 43801,
+            "completedAt": 1780923442726,
+            "concepts": [
+              {
+                "concept": "Informace",
+                "levelId": 1,
+                "correct": true,
+                "reactionMs": 4936,
+                "hinted": false
+              },
+              {
+                "concept": "Jazyk",
+                "levelId": 1,
+                "correct": true,
+                "reactionMs": 2728,
+                "hinted": false
+              },
+              {
+                "concept": "Znak",
+                "levelId": 1,
+                "correct": true,
+                "reactionMs": 4189,
+                "hinted": false
+              },
+              {
+                "concept": "Věda",
+                "levelId": 1,
+                "correct": true,
+                "reactionMs": 4695,
+                "hinted": false
+              },
+              {
+                "concept": "Inteligence",
+                "levelId": 1,
+                "correct": true,
+                "reactionMs": 5687,
+                "hinted": false
+              },
+              {
+                "concept": "Výzkum",
+                "levelId": 1,
+                "correct": true,
+                "reactionMs": 6778,
+                "hinted": true
+              },
+              {
+                "concept": "Entropie",
+                "levelId": 1,
+                "correct": true,
+                "reactionMs": 8438,
+                "hinted": false
+              }
+            ]
+          },
+          {
+            "id": "ea8404e8-d062-4255-ad43-d6dd7cbe6df9",
+            "runNo": 2,
+            "levelId": 2,
+            "levelTitle": "Lingvistika a písmo",
+            "ok": true,
+            "score": 1766,
+            "accuracy": 85.7,
+            "avgReaction": 5843,
+            "totalAnswers": 7,
+            "correctAnswers": 6,
+            "wrongAnswers": 1,
+            "hints": 4,
+            "memoryIndex": 78,
+            "forgettingRisk": 43,
+            "durationMs": 47721,
+            "completedAt": 1780923500692,
+            "concepts": [
+              {
+                "concept": "Syntax",
+                "levelId": 2,
+                "correct": true,
+                "reactionMs": 7653,
+                "hinted": false
+              },
+              {
+                "concept": "Sémantika",
+                "levelId": 2,
+                "correct": true,
+                "reactionMs": 4062,
+                "hinted": false
+              },
+              {
+                "concept": "Fonologie",
+                "levelId": 2,
+                "correct": false,
+                "reactionMs": 7040,
+                "hinted": true
+              },
+              {
+                "concept": "Fonetika",
+                "levelId": 2,
+                "correct": true,
+                "reactionMs": 4683,
+                "hinted": true
+              },
+              {
+                "concept": "Abjad",
+                "levelId": 2,
+                "correct": true,
+                "reactionMs": 4651,
+                "hinted": false
+              },
+              {
+                "concept": "Morfologie",
+                "levelId": 2,
+                "correct": true,
+                "reactionMs": 8505,
+                "hinted": true
+              },
+              {
+                "concept": "Slabičné písmo",
+                "levelId": 2,
+                "correct": true,
+                "reactionMs": 4308,
+                "hinted": true
+              }
+            ]
+          },
+          {
+            "id": "0df69237-0fdb-41c5-b58a-9df490b02edd",
+            "runNo": 3,
+            "levelId": 3,
+            "levelTitle": "Katalogizace a metadata",
+            "ok": true,
+            "score": 1499,
+            "accuracy": 71.4,
+            "avgReaction": 5304,
+            "totalAnswers": 7,
+            "correctAnswers": 5,
+            "wrongAnswers": 2,
+            "hints": 4,
+            "memoryIndex": 70,
+            "forgettingRisk": 56,
+            "durationMs": 44381,
+            "completedAt": 1780923559184,
+            "concepts": [
+              {
+                "concept": "Ontologie",
+                "levelId": 3,
+                "correct": false,
+                "reactionMs": 7275,
+                "hinted": false
+              },
+              {
+                "concept": "MDT",
+                "levelId": 3,
+                "correct": false,
+                "reactionMs": 4187,
+                "hinted": true
+              },
+              {
+                "concept": "MARC 21",
+                "levelId": 3,
+                "correct": true,
+                "reactionMs": 2842,
+                "hinted": true
+              },
+              {
+                "concept": "Tezaurus",
+                "levelId": 3,
+                "correct": true,
+                "reactionMs": 6626,
+                "hinted": true
+              },
+              {
+                "concept": "Katalogizace",
+                "levelId": 3,
+                "correct": true,
+                "reactionMs": 4939,
+                "hinted": true
+              },
+              {
+                "concept": "Metadata",
+                "levelId": 3,
+                "correct": true,
+                "reactionMs": 4774,
+                "hinted": false
+              },
+              {
+                "concept": "RDA",
+                "levelId": 3,
+                "correct": true,
+                "reactionMs": 6485,
+                "hinted": false
+              }
+            ]
+          },
+          {
+            "id": "b09d0dba-4893-48e6-9435-de664a1813a5",
+            "runNo": 4,
+            "levelId": 4,
+            "levelTitle": "Informační vyhledávání",
+            "ok": false,
+            "score": 732,
+            "accuracy": 57.1,
+            "avgReaction": 8635,
+            "totalAnswers": 7,
+            "correctAnswers": 4,
+            "wrongAnswers": 3,
+            "hints": 6,
+            "memoryIndex": 54,
+            "forgettingRisk": 85,
+            "durationMs": 68136,
+            "completedAt": 1780923633601,
+            "concepts": [
+              {
+                "concept": "Informační šum",
+                "levelId": 4,
+                "correct": false,
+                "reactionMs": 13733,
+                "hinted": true
+              },
+              {
+                "concept": "Rešeršní dotaz",
+                "levelId": 4,
+                "correct": true,
+                "reactionMs": 11282,
+                "hinted": true
+              },
+              {
+                "concept": "Booleovské operátory",
+                "levelId": 4,
+                "correct": true,
+                "reactionMs": 5885,
+                "hinted": true
+              },
+              {
+                "concept": "Přesnost a Úplnost",
+                "levelId": 4,
+                "correct": true,
+                "reactionMs": 8777,
+                "hinted": true
+              },
+              {
+                "concept": "Informační potřeba",
+                "levelId": 4,
+                "correct": false,
+                "reactionMs": 10897,
+                "hinted": true
+              },
+              {
+                "concept": "Relevance a Pertinence",
+                "levelId": 4,
+                "correct": true,
+                "reactionMs": 9637,
+                "hinted": true
+              },
+              {
+                "concept": "Tronkace",
+                "levelId": 4,
+                "correct": false,
+                "reactionMs": 232,
+                "hinted": false
+              }
+            ]
+          }
+        ]
       },
       "p-uffqsavc3bmq4xqtlx": {
         "id": "p-uffqsavc3bmq4xqtlx",
@@ -377,7 +885,7 @@
         "name": "Adela Tablet",
         "role": "student",
         "joinedAt": 1780918435721,
-        "lastSeen": 1780919023722,
+        "lastSeen": 1780920331472,
         "current": {
           "phase": "online",
           "view": "levels",
@@ -399,22 +907,79 @@
         "name": "Miloš Mobil",
         "role": "student",
         "joinedAt": 1780918746508,
-        "lastSeen": 1780919350101,
-        "current": {
-          "phase": "online",
-          "view": "levels",
-          "levelId": 1,
-          "levelTitle": "Teoretické základy",
-          "roomIndex": 1,
-          "roomsTotal": 7,
-          "xp": 0,
-          "score": 0,
-          "combo": 0,
-          "stability": null,
-          "answerIndex": null,
-          "updatedAt": 1780919044706
-        },
-        "runs": []
+        "lastSeen": 1780924114722,
+        "current": null,
+        "runs": [
+          {
+            "id": "p-f8tmi91uksnmq581wce",
+            "runNo": 1,
+            "levelId": 1,
+            "levelTitle": "Teoretické základy",
+            "ok": true,
+            "score": 2222,
+            "accuracy": 100,
+            "avgReaction": 9877,
+            "totalAnswers": 7,
+            "correctAnswers": 7,
+            "wrongAnswers": 0,
+            "hints": 1,
+            "memoryIndex": 85,
+            "forgettingRisk": 19,
+            "durationMs": 75468,
+            "completedAt": 1780923807230,
+            "concepts": [
+              {
+                "concept": "Entropie",
+                "levelId": 1,
+                "correct": true,
+                "reactionMs": 15840,
+                "hinted": false
+              },
+              {
+                "concept": "Znak",
+                "levelId": 1,
+                "correct": true,
+                "reactionMs": 7973,
+                "hinted": false
+              },
+              {
+                "concept": "Jazyk",
+                "levelId": 1,
+                "correct": true,
+                "reactionMs": 5685,
+                "hinted": false
+              },
+              {
+                "concept": "Informace",
+                "levelId": 1,
+                "correct": true,
+                "reactionMs": 6618,
+                "hinted": false
+              },
+              {
+                "concept": "Věda",
+                "levelId": 1,
+                "correct": true,
+                "reactionMs": 5147,
+                "hinted": false
+              },
+              {
+                "concept": "Výzkum",
+                "levelId": 1,
+                "correct": true,
+                "reactionMs": 15349,
+                "hinted": true
+              },
+              {
+                "concept": "Inteligence",
+                "levelId": 1,
+                "correct": true,
+                "reactionMs": 12527,
+                "hinted": false
+              }
+            ]
+          }
+        ]
       }
     }
   }
