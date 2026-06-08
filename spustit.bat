@@ -1,5 +1,6 @@
 @echo off
 chcp 65001 > nul
+cd /d "%~dp0"
 title Klementinum 2099 - Labyrint poznání
 echo ======================================================
 echo    Spouštění hry Klementinum 2099 - Labyrint poznání
@@ -10,7 +11,7 @@ echo.
 where node >nul 2>nul
 if %errorlevel% neq 0 (
     echo [POZOR] Node.js není nainstalován na tomto počítači.
-    echo Hra bude spuštěna v offline režimu (bez podpory sdílení na síti).
+    echo Hra bude spuštěna v offline režimu - bez podpory sdílení na síti.
     echo.
     echo Spouštím index.html přímo v prohlížeči...
     start index.html
