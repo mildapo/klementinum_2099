@@ -1,0 +1,421 @@
+{
+  "KLEMENTINUM_TEST": {
+    "code": "KLEMENTINUM_TEST",
+    "createdAt": 1780917516145,
+    "events": [
+      {
+        "id": "fe9539aa-6d97-42fb-905d-1a2fc447fbcc",
+        "at": 1780917516145,
+        "kind": "join",
+        "playerId": "4c8fa13f-71a1-4714-8ed8-3139987f5573",
+        "playerName": "Karel",
+        "role": "student"
+      },
+      {
+        "id": "bd2d4769-724a-4d87-9685-799a4394a61a",
+        "at": 1780917613461,
+        "kind": "run-loss",
+        "playerId": "4c8fa13f-71a1-4714-8ed8-3139987f5573",
+        "playerName": "Karel",
+        "levelId": 1,
+        "score": 0,
+        "memoryIndex": 22,
+        "forgettingRisk": 93
+      },
+      {
+        "id": "6c1aa534-0d5c-4997-8cb2-2315490e2fe1",
+        "at": 1780917627619,
+        "kind": "leave",
+        "playerId": "4c8fa13f-71a1-4714-8ed8-3139987f5573",
+        "playerName": "Karel",
+        "role": "student"
+      },
+      {
+        "id": "51747c3e-82f6-4028-850e-007f6e994fcd",
+        "at": 1780917635950,
+        "kind": "join",
+        "playerId": "4c8fa13f-71a1-4714-8ed8-3139987f5573",
+        "playerName": "Karel",
+        "role": "teacher"
+      },
+      {
+        "id": "1f83aed6-ca12-4042-a78b-4f7160bb52df",
+        "at": 1780917654848,
+        "kind": "join",
+        "playerId": "4c8fa13f-71a1-4714-8ed8-3139987f5573",
+        "playerName": "Karel",
+        "role": "student"
+      }
+    ],
+    "players": {
+      "4c8fa13f-71a1-4714-8ed8-3139987f5573": {
+        "id": "4c8fa13f-71a1-4714-8ed8-3139987f5573",
+        "name": "Karel",
+        "role": "student",
+        "joinedAt": 1780917516145,
+        "lastSeen": 1780917654849,
+        "current": {
+          "phase": "online",
+          "view": "levels",
+          "levelId": 1,
+          "levelTitle": "Teoretické základy",
+          "roomIndex": 1,
+          "roomsTotal": 7,
+          "xp": 0,
+          "score": 0,
+          "combo": 0,
+          "stability": null,
+          "answerIndex": null,
+          "updatedAt": 1780917654847
+        },
+        "runs": [
+          {
+            "id": "498fd297-a32a-4a40-8a8b-fa95c8f6a20f",
+            "runNo": 1,
+            "levelId": 1,
+            "levelTitle": "Teoretické základy",
+            "ok": false,
+            "score": 0,
+            "accuracy": 0,
+            "avgReaction": 10902,
+            "totalAnswers": 3,
+            "correctAnswers": 0,
+            "wrongAnswers": 3,
+            "hints": 0,
+            "memoryIndex": 22,
+            "forgettingRisk": 93,
+            "durationMs": 36773,
+            "completedAt": 1780917613460,
+            "concepts": [
+              {
+                "concept": "Jazyk",
+                "levelId": 1,
+                "correct": false,
+                "reactionMs": 14944,
+                "hinted": false
+              },
+              {
+                "concept": "Entropie",
+                "levelId": 1,
+                "correct": false,
+                "reactionMs": 16024,
+                "hinted": false
+              },
+              {
+                "concept": "Inteligence",
+                "levelId": 1,
+                "correct": false,
+                "reactionMs": 1739,
+                "hinted": false
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "KLEMENTINUM": {
+    "code": "KLEMENTINUM",
+    "createdAt": 1780918404516,
+    "events": [
+      {
+        "id": "25725400-b6bb-4a47-837d-712e43a7ee32",
+        "at": 1780918404516,
+        "kind": "join",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Student",
+        "role": "student"
+      },
+      {
+        "id": "3e53008f-7fb3-436f-b720-7e2617e470f6",
+        "at": 1780918410901,
+        "kind": "join",
+        "playerId": "p-uffqsavc3bmq4xqtlx",
+        "playerName": "Tablet Adam",
+        "role": "student"
+      },
+      {
+        "id": "cf2a75bc-3faa-4eaa-b978-f71f6854b380",
+        "at": 1780918435721,
+        "kind": "join",
+        "playerId": "p-lqr7bw01b2cmq502fjw",
+        "playerName": "Tablet Adela",
+        "role": "student"
+      },
+      {
+        "id": "07067192-50ed-44c2-b185-ea3730650c66",
+        "at": 1780918451560,
+        "kind": "leave",
+        "playerId": "p-lqr7bw01b2cmq502fjw",
+        "playerName": "Tablet Adela",
+        "role": "student"
+      },
+      {
+        "id": "73140b56-7b67-4d18-9524-9648855b97d0",
+        "at": 1780918642191,
+        "kind": "leave",
+        "playerId": "p-uffqsavc3bmq4xqtlx",
+        "playerName": "Tablet Adam",
+        "role": "student"
+      },
+      {
+        "id": "8e56cd10-4f46-442e-8bf4-00ecd2227e97",
+        "at": 1780918647662,
+        "kind": "join",
+        "playerId": "p-uffqsavc3bmq4xqtlx",
+        "playerName": "Tablet Adam",
+        "role": "student"
+      },
+      {
+        "id": "80736589-163e-43f4-8d61-627bbba5bd86",
+        "at": 1780918675738,
+        "kind": "join",
+        "playerId": "p-lqr7bw01b2cmq502fjw",
+        "playerName": "Tablet Adela",
+        "role": "student"
+      },
+      {
+        "id": "a01d0037-9012-4e7b-ae79-04be9bdab476",
+        "at": 1780918687546,
+        "kind": "leave",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Student",
+        "role": "student"
+      },
+      {
+        "id": "a0b648e8-8126-4109-87cd-5ffce9784b93",
+        "at": 1780918687865,
+        "kind": "join",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Student",
+        "role": "student"
+      },
+      {
+        "id": "22355360-ca98-4cd0-8c9c-ed6022edf203",
+        "at": 1780918746508,
+        "kind": "join",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš mobil",
+        "role": "student"
+      },
+      {
+        "id": "481f90f1-201f-4dbd-9bfa-195fff938b9e",
+        "at": 1780918766045,
+        "kind": "leave",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Student",
+        "role": "student"
+      },
+      {
+        "id": "b417af35-c75c-4d43-ab90-45b63fdce955",
+        "at": 1780918766353,
+        "kind": "join",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Miloš notebook",
+        "role": "student"
+      },
+      {
+        "id": "570f243c-923a-4e3a-9fcc-fb16f330b809",
+        "at": 1780918829555,
+        "kind": "leave",
+        "playerId": "p-uffqsavc3bmq4xqtlx",
+        "playerName": "Tablet Adam",
+        "role": "student"
+      },
+      {
+        "id": "229f4697-239b-4b83-a58f-57703b71625c",
+        "at": 1780918829655,
+        "kind": "join",
+        "playerId": "p-uffqsavc3bmq4xqtlx",
+        "playerName": "Adam Tablet",
+        "role": "student"
+      },
+      {
+        "id": "e456907b-91a2-4ea5-abd1-b91f6b640f91",
+        "at": 1780918835812,
+        "kind": "leave",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Miloš notebook",
+        "role": "student"
+      },
+      {
+        "id": "764be8c5-5d43-46af-9505-b28745e13708",
+        "at": 1780918846797,
+        "kind": "leave",
+        "playerId": "p-uffqsavc3bmq4xqtlx",
+        "playerName": "Adam Tablet",
+        "role": "student"
+      },
+      {
+        "id": "5f1fa1c5-4780-4534-8c64-54c69b42d40d",
+        "at": 1780918846812,
+        "kind": "join",
+        "playerId": "p-uffqsavc3bmq4xqtlx",
+        "playerName": "Adam Tablet",
+        "role": "student"
+      },
+      {
+        "id": "0e43eb58-62f9-40df-ac09-eb57eb3af1f7",
+        "at": 1780918921374,
+        "kind": "join",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Student",
+        "role": "teacher"
+      },
+      {
+        "id": "a81a3698-4cb9-40cf-992f-bd1a1846b4b8",
+        "at": 1780919023671,
+        "kind": "leave",
+        "playerId": "p-lqr7bw01b2cmq502fjw",
+        "playerName": "Tablet Adela",
+        "role": "student"
+      },
+      {
+        "id": "cdcd96c3-7eac-4931-8a8e-a2f8d0bb190b",
+        "at": 1780919023716,
+        "kind": "join",
+        "playerId": "p-lqr7bw01b2cmq502fjw",
+        "playerName": "Adela Tablet",
+        "role": "student"
+      },
+      {
+        "id": "115f8fb4-865a-43ee-89da-8dc6d0c7d1ca",
+        "at": 1780919044433,
+        "kind": "leave",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš mobil",
+        "role": "student"
+      },
+      {
+        "id": "a5858ad3-20f3-4d1a-b7ec-8352fec8ee17",
+        "at": 1780919044459,
+        "kind": "join",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš Mobil",
+        "role": "student"
+      },
+      {
+        "id": "21e5cab3-36a7-4d66-be1e-093ff0d1d3bb",
+        "at": 1780919072805,
+        "kind": "join",
+        "playerId": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "playerName": "Miloš Notebook",
+        "role": "student"
+      },
+      {
+        "id": "1a95cfcc-ffc0-4c89-ad07-fd97b86909d5",
+        "at": 1780919310681,
+        "kind": "leave",
+        "playerId": "p-uffqsavc3bmq4xqtlx",
+        "playerName": "Adam Tablet",
+        "role": "student"
+      },
+      {
+        "id": "1c1c76d5-94b4-4813-8245-ba39d5b18100",
+        "at": 1780919350099,
+        "kind": "leave",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš Mobil",
+        "role": "student"
+      },
+      {
+        "id": "afebb3c3-4fb5-4413-ad17-6c9ee0601bcd",
+        "at": 1780919350101,
+        "kind": "leave",
+        "playerId": "p-9mwigtfh1jpmq501dzc",
+        "playerName": "Miloš Mobil",
+        "role": "student"
+      }
+    ],
+    "players": {
+      "128ff2bf-408e-4ed1-b23e-d1677b96660f": {
+        "id": "128ff2bf-408e-4ed1-b23e-d1677b96660f",
+        "name": "Miloš Notebook",
+        "role": "student",
+        "joinedAt": 1780918404516,
+        "lastSeen": 1780919072807,
+        "current": {
+          "phase": "online",
+          "view": "levels",
+          "levelId": 1,
+          "levelTitle": "Teoretické základy",
+          "roomIndex": 1,
+          "roomsTotal": 7,
+          "xp": 0,
+          "score": 0,
+          "combo": 0,
+          "stability": null,
+          "answerIndex": null,
+          "updatedAt": 1780919072818
+        },
+        "runs": []
+      },
+      "p-uffqsavc3bmq4xqtlx": {
+        "id": "p-uffqsavc3bmq4xqtlx",
+        "name": "Adam Tablet",
+        "role": "student",
+        "joinedAt": 1780918410901,
+        "lastSeen": 1780919310681,
+        "current": {
+          "phase": "Kóduje kotvy",
+          "view": "explore",
+          "levelId": 1,
+          "levelTitle": "Teoretické základy",
+          "roomIndex": 7,
+          "roomsTotal": 7,
+          "xp": 0,
+          "score": 0,
+          "combo": 0,
+          "stability": null,
+          "answerIndex": null,
+          "updatedAt": 1780918870758
+        },
+        "runs": []
+      },
+      "p-lqr7bw01b2cmq502fjw": {
+        "id": "p-lqr7bw01b2cmq502fjw",
+        "name": "Adela Tablet",
+        "role": "student",
+        "joinedAt": 1780918435721,
+        "lastSeen": 1780919023722,
+        "current": {
+          "phase": "online",
+          "view": "levels",
+          "levelId": 1,
+          "levelTitle": "Teoretické základy",
+          "roomIndex": 1,
+          "roomsTotal": 7,
+          "xp": 0,
+          "score": 0,
+          "combo": 0,
+          "stability": null,
+          "answerIndex": null,
+          "updatedAt": 1780919023872
+        },
+        "runs": []
+      },
+      "p-9mwigtfh1jpmq501dzc": {
+        "id": "p-9mwigtfh1jpmq501dzc",
+        "name": "Miloš Mobil",
+        "role": "student",
+        "joinedAt": 1780918746508,
+        "lastSeen": 1780919350101,
+        "current": {
+          "phase": "online",
+          "view": "levels",
+          "levelId": 1,
+          "levelTitle": "Teoretické základy",
+          "roomIndex": 1,
+          "roomsTotal": 7,
+          "xp": 0,
+          "score": 0,
+          "combo": 0,
+          "stability": null,
+          "answerIndex": null,
+          "updatedAt": 1780919044706
+        },
+        "runs": []
+      }
+    }
+  }
+}

@@ -8,6 +8,74 @@ const HOST = process.env.HOST || "0.0.0.0";
 const ROOT = __dirname;
 const WS_GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 const rooms = new Map();
+const DB_FILE = path.join(ROOT, "stats_history.json");
+
+async function loadStats() {
+  try {
+    const data = await fs.readFile(DB_FILE, "utf8");
+    const json = JSON.parse(data);
+    for (const [code, roomData] of Object.entries(json)) {
+      const room = {
+        code: roomData.code,
+        createdAt: roomData.createdAt || Date.now(),
+        clients: new Set(),
+        players: new Map(),
+        events: roomData.events || []
+      };
+      if (roomData.players) {
+        for (const [playerId, playerData] of Object.entries(roomData.players)) {
+          room.players.set(playerId, {
+            id: playerData.id,
+            name: playerData.name,
+            role: playerData.role,
+            online: false,
+            joinedAt: playerData.joinedAt || Date.now(),
+            lastSeen: playerData.lastSeen || Date.now(),
+            current: playerData.current || null,
+            runs: playerData.runs || []
+          });
+        }
+      }
+      rooms.set(code, room);
+    }
+    console.log(`[DB] Načteny statistiky pro ${Object.keys(json).length} místností.`);
+  } catch (err) {
+    if (err.code !== "ENOENT") {
+      console.error("[DB ERROR] Chyba při načítání statistik:", err);
+    } else {
+      console.log("[DB] Statistický soubor zatím neexistuje, bude vytvořen při prvním zápisu.");
+    }
+  }
+}
+
+async function saveStats() {
+  try {
+    const backup = {};
+    for (const [code, room] of rooms.entries()) {
+      const playersObj = {};
+      for (const [playerId, player] of room.players.entries()) {
+        playersObj[playerId] = {
+          id: player.id,
+          name: player.name,
+          role: player.role,
+          joinedAt: player.joinedAt,
+          lastSeen: player.lastSeen,
+          current: player.current,
+          runs: player.runs
+        };
+      }
+      backup[code] = {
+        code: room.code,
+        createdAt: room.createdAt,
+        events: room.events,
+        players: playersObj
+      };
+    }
+    await fs.writeFile(DB_FILE, JSON.stringify(backup, null, 2), "utf8");
+  } catch (err) {
+    console.error("[DB ERROR] Chyba při ukládání statistik:", err);
+  }
+}
 
 const mimeTypes = {
   ".html": "text/html; charset=utf-8",
@@ -232,6 +300,7 @@ function handleMessage(client, raw) {
     addEvent(room, { kind: "join", playerId: id, playerName: name, role });
     sendJson(client, { type: "hello:ok", playerId: id, room: room.code, serverTime: Date.now() });
     broadcast(room);
+    saveStats();
     return;
   }
 
@@ -246,6 +315,7 @@ function handleMessage(client, raw) {
     player.current = message.current || null;
     player.name = String(message.name || player.name).trim().slice(0, 40);
     broadcast(room);
+    saveStats();
     return;
   }
 
@@ -263,6 +333,7 @@ function handleMessage(client, raw) {
       forgettingRisk: run.forgettingRisk
     });
     broadcast(room);
+    saveStats();
     return;
   }
 
@@ -276,6 +347,7 @@ function handleMessage(client, raw) {
     }
     addEvent(room, { kind: "reset", playerId: player.id, playerName: player.name, role: "teacher" });
     broadcast(room);
+    saveStats();
   }
 }
 
@@ -336,6 +408,7 @@ function closeClient(client) {
     }
   }
   broadcast(room);
+  saveStats();
 }
 
 const server = http.createServer(serveStatic);
@@ -366,7 +439,10 @@ server.on("upgrade", (req, socket) => {
   socket.on("error", () => closeClient(client));
 });
 
-server.listen(PORT, HOST, () => {
-  console.log(`Klementinum 2099 online běží na http://localhost:${PORT}`);
-  console.log(`Dashboard učitele: http://localhost:${PORT}/?teacher=1`);
-});
+(async () => {
+  await loadStats();
+  server.listen(PORT, HOST, () => {
+    console.log(`Klementinum 2099 online běží na http://localhost:${PORT}`);
+    console.log(`Dashboard učitele: http://localhost:${PORT}/?teacher=1`);
+  });
+})();

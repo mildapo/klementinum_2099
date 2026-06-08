@@ -688,6 +688,7 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
           </div>
           <div class="online-actions">
             <button class="primary" data-action="connect-teacher">${state.online.connected ? "Obnovit dashboard" : "Připojit dashboard"}</button>
+            <button class="ghost" data-action="export-csv">Exportovat CSV</button>
             <button class="ghost" data-action="teacher-reset">Vyčistit statistiky</button>
             <button class="ghost" data-action="levels">Studentský pohled</button>
           </div>
@@ -727,6 +728,97 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
           <div class="run-history">${histories || `<div class="share-line">Jakmile studenti dokončí opakované pokusy, uvidíš zde trend po každé hře.</div>`}</div>
         </section>
       </section>`);
+  }
+
+  function exportToCSV() {
+    const room = state.online.roomState;
+    if (!room || !room.players || !room.players.length) {
+      showToast("Nejsou k dispozici žádná data pro export.");
+      return;
+    }
+    
+    const students = room.players.filter(p => p.role !== "teacher");
+    if (!students.length) {
+      showToast("Nejsou k dispozici žádné pokusy studentů.");
+      return;
+    }
+
+    const headers = [
+      "Místnost",
+      "Student",
+      "Pokus č.",
+      "Level ID",
+      "Název Levelu",
+      "Výsledek",
+      "Skóre",
+      "Přesnost (%)",
+      "Průměrná reakce (s)",
+      "Index paměti",
+      "Riziko zapomínání",
+      "Počet nápověd",
+      "Datum dokončení"
+    ];
+
+    const rows = [];
+    rows.push(headers.join(";"));
+
+    for (const student of students) {
+      if (!student.runs || !student.runs.length) {
+        const row = [
+          room.code,
+          student.name,
+          "N/A",
+          "-",
+          "-",
+          "nehrál",
+          0,
+          "0 %",
+          "0.00",
+          0,
+          0,
+          0,
+          student.joinedAt ? new Date(student.joinedAt).toLocaleString("cs-CZ") : "-"
+        ];
+        rows.push(row.map(val => `"${String(val).replace(/"/g, '""')}"`).join(";"));
+        continue;
+      }
+      
+      for (const run of student.runs) {
+        const dateStr = run.completedAt ? new Date(run.completedAt).toLocaleString("cs-CZ") : "-";
+        const resultStr = run.ok ? "úspěch" : "pád";
+        const reactionSec = run.avgReaction ? (run.avgReaction / 1000).toFixed(2) : "0.00";
+        
+        const row = [
+          room.code,
+          student.name,
+          run.runNo,
+          run.levelId,
+          run.levelTitle,
+          resultStr,
+          run.score,
+          run.accuracy,
+          reactionSec,
+          run.memoryIndex,
+          run.forgettingRisk,
+          run.hints,
+          dateStr
+        ];
+        
+        rows.push(row.map(val => `"${String(val).replace(/"/g, '""')}"`).join(";"));
+      }
+    }
+
+    const csvContent = "\uFEFF" + rows.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `klementinum_export_${room.code}_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast("Statistiky byly exportovány do CSV.");
   }
 
   function startLevel(id){
@@ -1131,6 +1223,7 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
     if(action === "connect-teacher") connectOnline("teacher");
     if(action === "disconnect-online") disconnectOnline(true);
     if(action === "teacher-reset") sendOnline("teacher:reset");
+    if(action === "export-csv") exportToCSV();
   });
 
   app.addEventListener("submit", event => {
