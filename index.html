@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klementinum 2099 - Labyrint poznání</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#13100f;
+  --bg-2:#1f1714;
+  --ink:#f7efe2;
+  --muted:#b8aa98;
+  --soft:#312722;
+  --line:#55463d;
+  --danger:#ef4444;
+  --ok:#22c55e;
+  --warn:#f59e0b;
+  --focus:#38bdf8;
+  --shadow:0 18px 48px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;letter-spacing:0}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Roboto,Arial,sans-serif}
+body{overflow-x:hidden}
+button,input{font:inherit}
+button{border:0;cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+#app{min-height:100vh;position:relative;background:
+  linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px) 0 0/46px 46px,
+  radial-gradient(circle at 18% 12%,rgba(245,158,11,.16),transparent 28rem),
+  radial-gradient(circle at 82% 4%,rgba(34,197,94,.13),transparent 24rem),
+  linear-gradient(135deg,#15110f 0%,#201713 50%,#11100f 100%)}
+.app-shell{min-height:100vh;display:grid;grid-template-rows:auto 1fr}
+.topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.8rem 1rem;border-bottom:1px solid rgba(255,255,255,.1);background:rgba(19,16,15,.88);backdrop-filter:blur(14px)}
+.brand{display:flex;align-items:center;gap:.75rem;min-width:0}
+.brand-mark{width:2.35rem;height:2.35rem;display:grid;place-items:center;border:1px solid rgba(255,255,255,.16);background:#211914;color:#fbbf24;font-weight:900;box-shadow:inset 0 0 24px rgba(251,191,36,.12)}
+.brand-title{font-weight:900;font-size:1rem;white-space:nowrap}
+.brand-sub{color:var(--muted);font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.status-strip{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;justify-content:flex-end}
+.pill{display:inline-flex;align-items:center;gap:.35rem;min-height:2rem;padding:.35rem .62rem;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);font-weight:800;font-size:.82rem;white-space:nowrap}
+.icon-btn{width:2.2rem;height:2.2rem;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-size:1.05rem}
+.icon-btn:hover,.primary:hover,.ghost:hover,.level-card:not(.is-locked):hover{transform:translateY(-1px);filter:brightness(1.08)}
+main{padding:1rem;width:100%}
+.levels-layout{max-width:1180px;margin:0 auto;display:grid;gap:1rem}
+.hero-row{display:grid;grid-template-columns:1.05fr .95fr;gap:1rem;align-items:stretch}
+.command-band,.memory-ledger,.level-card,.stage-panel,.boss-panel,.result-panel{border:1px solid rgba(255,255,255,.12);background:rgba(33,25,20,.78);box-shadow:var(--shadow)}
+.command-band{min-height:18rem;display:grid;grid-template-columns:1fr auto;gap:1.25rem;padding:1.25rem;overflow:hidden;position:relative}
+.command-band:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,rgba(20,184,166,.12),transparent 40%,rgba(251,113,133,.12));pointer-events:none}
+.command-copy{position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:1rem;z-index:1}
+h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
+.kicker{margin:0;color:#fbbf24;font-weight:900;font-size:.82rem;text-transform:uppercase}
+.command-copy p{margin:0;max-width:42rem;color:#d7c9b9;line-height:1.55;font-size:1rem}
+.hero-actions{display:flex;gap:.6rem;flex-wrap:wrap}
+.primary,.ghost{min-height:2.65rem;padding:.65rem .9rem;border:1px solid rgba(255,255,255,.14);font-weight:900;background:var(--ink);color:#17110e}
+.primary{box-shadow:0 10px 28px rgba(247,239,226,.16)}
+.ghost{background:rgba(255,255,255,.06);color:var(--ink)}
+.sim-visual{position:relative;z-index:1;width:15rem;min-height:15rem;align-self:center;display:grid;place-items:center;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(0,0,0,.12));border:1px solid rgba(255,255,255,.12);overflow:hidden}
+.sim-visual:before{content:"";position:absolute;width:10rem;height:10rem;border:1px solid rgba(255,255,255,.18);transform:rotate(45deg)}
+.sim-visual:after{content:"";position:absolute;inset:1rem;border:1px dashed rgba(251,191,36,.36)}
+.sim-core{width:6.2rem;height:6.2rem;display:grid;place-items:center;border:1px solid rgba(251,191,36,.65);background:#19120f;color:#fbbf24;font-size:2.6rem;font-weight:900;animation:pulseCore 2.8s ease-in-out infinite;z-index:2}
+@keyframes pulseCore{0%,100%{transform:scale(1);box-shadow:0 0 0 rgba(251,191,36,0)}50%{transform:scale(1.04);box-shadow:0 0 42px rgba(251,191,36,.22)}}
+.memory-ledger{padding:1rem;display:grid;gap:.85rem;align-content:start}
+.ledger-title{margin:0;font-weight:950;font-size:1rem}
+.ledger-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem}
+.ledger-cell{min-height:4.5rem;padding:.55rem;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.045);display:flex;flex-direction:column;justify-content:space-between;gap:.45rem}
+.ledger-value{font-size:1.35rem;font-weight:950;color:#fbbf24}
+.ledger-label{font-size:.72rem;color:var(--muted);font-weight:800}
+.level-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.85rem}
+.level-card{position:relative;min-height:13.25rem;padding:1rem;display:flex;flex-direction:column;gap:.75rem;text-align:left;overflow:hidden;transition:transform .18s ease,filter .18s ease,border-color .18s ease}
+.level-card:not(.is-locked){background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(33,25,20,.82))}
+.level-card.is-active{border-color:var(--level-color)}
+.level-card.is-locked{opacity:.48;cursor:not-allowed}
+.level-card .level-glyph{width:3rem;height:3rem;display:grid;place-items:center;border:1px solid rgba(255,255,255,.16);background:rgba(0,0,0,.17);color:var(--level-color);font-weight:950;font-size:1.35rem}
+.level-card h2{margin:0;font-size:1.08rem;line-height:1.15}
+.level-card p{margin:0;color:var(--muted);line-height:1.35;font-size:.85rem}
+.level-meta{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:.5rem;color:#d9cbbb;font-size:.78rem;font-weight:900}
+.lock-badge{position:absolute;top:.8rem;right:.8rem;font-size:.8rem;color:#dbcdbd;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.1);padding:.28rem .45rem}
+.stage-layout{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:1rem;align-items:start}
+.stage-panel{min-height:calc(100vh - 6.4rem);display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}
+.stage-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem;border-bottom:1px solid rgba(255,255,255,.1)}
+.stage-title{min-width:0}
+.stage-title p{margin:0 0 .2rem;color:var(--muted);font-size:.82rem;font-weight:850}
+.stage-title h2{margin:0;font-size:1.45rem;line-height:1.1}
+.path-dots{display:flex;gap:.38rem;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.path-dot{width:1.75rem;height:1.75rem;display:grid;place-items:center;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);font-size:.72rem;font-weight:950;color:var(--muted)}
+.path-dot.is-done{background:var(--level-color);color:#110f0e;border-color:var(--level-color)}
+.path-dot.is-current{box-shadow:0 0 0 3px color-mix(in srgb,var(--level-color) 24%,transparent);border-color:var(--level-color);color:var(--ink)}
+.room-stage{display:grid;grid-template-columns:18rem minmax(0,1fr);gap:1rem;padding:1rem;align-items:stretch}
+.memory-scene{min-height:24rem;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.11);background:
+  linear-gradient(160deg,color-mix(in srgb,var(--level-color) 18%,transparent),transparent 44%),
+  repeating-linear-gradient(0deg,rgba(255,255,255,.045) 0 1px,transparent 1px 16px),
+  #18120f}
+.memory-scene:before{content:"";position:absolute;left:14%;right:14%;top:14%;bottom:14%;border:2px solid color-mix(in srgb,var(--level-color) 45%,transparent);transform:perspective(420px) rotateX(58deg);box-shadow:0 0 60px color-mix(in srgb,var(--level-color) 18%,transparent)}
+.memory-scene:after{content:"";position:absolute;left:50%;bottom:-1rem;width:9rem;height:22rem;transform:translateX(-50%) perspective(360px) rotateX(68deg);background:linear-gradient(180deg,color-mix(in srgb,var(--level-color) 38%,transparent),transparent);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%)}
+.artifact{position:absolute;left:50%;top:50%;width:7.4rem;height:7.4rem;transform:translate(-50%,-50%);display:grid;place-items:center;border:1px solid color-mix(in srgb,var(--level-color) 68%,white 8%);background:rgba(0,0,0,.42);color:var(--level-color);font-size:2.2rem;font-weight:950;text-align:center;box-shadow:0 0 40px color-mix(in srgb,var(--level-color) 22%,transparent);animation:floatArtifact 3.2s ease-in-out infinite;z-index:2}
+@keyframes floatArtifact{0%,100%{transform:translate(-50%,-52%)}50%{transform:translate(-50%,-45%)}}
+.spark{position:absolute;width:.5rem;height:.5rem;background:var(--accent-color);box-shadow:0 0 18px var(--accent-color);animation:drift 5s linear infinite;opacity:.85}
+.spark.s1{left:18%;top:32%;animation-delay:-1s}.spark.s2{left:76%;top:24%;animation-delay:-2s}.spark.s3{left:63%;top:72%;animation-delay:-3s}.spark.s4{left:28%;top:78%;animation-delay:-4s}
+@keyframes drift{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-1.1rem) rotate(45deg)}}
+.room-copy{display:flex;flex-direction:column;gap:.85rem;min-width:0}
+.anchor-label{margin:0;color:var(--level-color);font-size:.78rem;font-weight:950;text-transform:uppercase}
+.room-copy h3{margin:0;font-size:2.1rem;line-height:1.05}
+.scene-text{margin:0;color:#e8dccc;line-height:1.65;font-size:1rem;max-width:64ch}
+.concept-strip{display:grid;grid-template-columns:auto 1fr;gap:.75rem;align-items:center;padding:.8rem;border-left:4px solid var(--level-color);background:rgba(255,255,255,.055)}
+.concept-symbol{width:2.7rem;height:2.7rem;display:grid;place-items:center;background:rgba(0,0,0,.22);font-size:1.2rem;font-weight:950;color:var(--level-color)}
+.concept-strip p{margin:0;color:var(--muted);font-size:.75rem;font-weight:850;text-transform:uppercase}
+.concept-strip strong{display:block;margin-top:.18rem;font-size:1.25rem}
+.sensory-box{margin:0;padding:.9rem;background:rgba(0,0,0,.17);border:1px solid rgba(255,255,255,.1);line-height:1.5;color:#ffe7bf}
+.stage-actions{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:1rem;border-top:1px solid rgba(255,255,255,.1)}
+.side-panel{display:grid;gap:1rem}
+.codex-list{border:1px solid rgba(255,255,255,.12);background:rgba(24,18,15,.72);padding:1rem;display:grid;gap:.75rem;box-shadow:var(--shadow)}
+.codex-list h3{margin:0;font-size:1rem}
+.memory-item{display:grid;grid-template-columns:2rem 1fr;gap:.6rem;align-items:center;min-height:2.7rem;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045);padding:.45rem}
+.memory-item.is-empty{opacity:.45}
+.memory-item span{display:grid;place-items:center;width:2rem;height:2rem;background:rgba(0,0,0,.22);color:var(--level-color);font-weight:950}
+.memory-item strong{display:block;font-size:.86rem}
+.memory-item small{display:block;color:var(--muted);font-size:.72rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.boss-layout{max-width:1000px;margin:0 auto;display:grid;gap:1rem}
+.boss-panel{min-height:calc(100vh - 6.4rem);display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}
+.boss-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem;border-bottom:1px solid rgba(255,255,255,.1)}
+.boss-title h2{margin:0;font-size:1.35rem;color:#fecaca}
+.boss-title p{margin:.18rem 0 0;color:var(--muted);font-size:.85rem}
+.meter-row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.heart{width:1.55rem;height:1.55rem;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fb7185;font-size:.9rem}
+.heart.is-empty{opacity:.25}
+.timer-shell{min-width:6rem;padding:.35rem .5rem;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.22);text-align:center;font-weight:950;color:#fde68a}
+.timer-bar{height:.28rem;margin-top:.35rem;background:var(--level-color);transform-origin:left center;transition:transform .18s linear}
+.attack-zone{display:grid;grid-template-columns:16rem minmax(0,1fr);gap:1rem;padding:1rem;align-items:stretch}
+.monster{position:relative;min-height:18rem;display:grid;place-items:center;border:1px solid rgba(239,68,68,.28);background:linear-gradient(180deg,rgba(239,68,68,.12),rgba(0,0,0,.16));overflow:hidden}
+.monster:before,.monster:after{content:"";position:absolute;background:#fecaca;width:2.1rem;height:2.1rem;top:38%;box-shadow:0 0 28px rgba(248,113,113,.8)}
+.monster:before{left:28%}
+.monster:after{right:28%}
+.monster-core{width:8.5rem;height:8.5rem;border:1px solid rgba(248,113,113,.58);background:rgba(0,0,0,.36);display:grid;place-items:center;color:#fecaca;font-size:3rem;font-weight:950;animation:monsterBeat 1.1s ease-in-out infinite}
+@keyframes monsterBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.attack-copy{display:flex;flex-direction:column;gap:.85rem;min-width:0}
+.attack-label{margin:0;color:#fca5a5;font-size:.78rem;text-transform:uppercase;font-weight:950}
+.attack-text{margin:0;padding:1rem;border-left:4px solid var(--danger);background:rgba(239,68,68,.08);font-size:1.25rem;line-height:1.45;color:#fff2e7}
+.answer-form{display:grid;grid-template-columns:1fr auto;gap:.55rem}
+.answer-form input{min-height:2.8rem;width:100%;border:1px solid rgba(255,255,255,.16);background:#110e0c;color:var(--ink);padding:.65rem .8rem;font-weight:850}
+.option-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}
+.option-btn{min-height:2.7rem;padding:.55rem .65rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-weight:900;text-align:left}
+.option-btn.is-correct{background:rgba(34,197,94,.2);border-color:#22c55e;color:#dcfce7}
+.option-btn.is-wrong{background:rgba(239,68,68,.2);border-color:#ef4444;color:#fee2e2}
+.option-btn:disabled{cursor:default}
+.boss-foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem;border-top:1px solid rgba(255,255,255,.1);color:var(--muted);font-weight:850}
+.combo{color:#fbbf24}
+.result-banner{padding:.8rem;border:1px solid rgba(255,255,255,.14);font-weight:900}
+.result-banner.ok{background:rgba(34,197,94,.13);color:#dcfce7}
+.result-banner.bad{background:rgba(239,68,68,.14);color:#fee2e2}
+.result-wrap{min-height:calc(100vh - 4.8rem);display:grid;place-items:center;padding:1rem}
+.result-panel{width:min(38rem,100%);padding:1.2rem;text-align:center}
+.result-panel h2{margin:.4rem 0;font-size:2rem}
+.result-panel p{margin:.4rem auto 1rem;color:#d8cbbb;line-height:1.55;max-width:30rem}
+.result-mark{width:5rem;height:5rem;margin:0 auto;display:grid;place-items:center;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);font-size:2rem;font-weight:950;color:var(--level-color)}
+.toast{position:fixed;left:50%;bottom:1rem;z-index:20;transform:translateX(-50%) translateY(140%);transition:transform .22s ease;max-width:min(34rem,calc(100vw - 2rem));padding:.75rem .9rem;background:#f7efe2;color:#15100e;font-weight:900;box-shadow:var(--shadow)}
+.toast.is-live{transform:translateX(-50%) translateY(0)}
+.online-panel{border:1px solid rgba(255,255,255,.12);background:rgba(24,18,15,.72);padding:1rem;display:grid;gap:.8rem;box-shadow:var(--shadow)}
+.online-panel h2,.online-panel h3,.teacher-panel h2,.teacher-panel h3{margin:0}
+.online-status{display:flex;align-items:center;justify-content:space-between;gap:.75rem;color:var(--muted);font-size:.84rem;font-weight:850}
+.status-dot{width:.75rem;height:.75rem;background:#78716c;box-shadow:0 0 0 rgba(0,0,0,0);display:inline-block}
+.status-dot.is-online{background:#22c55e;box-shadow:0 0 22px rgba(34,197,94,.45)}
+.form-grid{display:grid;grid-template-columns:1fr 9rem;gap:.55rem}
+.field{display:grid;gap:.25rem}
+.field span{font-size:.72rem;color:var(--muted);font-weight:900;text-transform:uppercase}
+.text-input{min-height:2.65rem;border:1px solid rgba(255,255,255,.16);background:#110e0c;color:var(--ink);padding:.6rem .7rem;font-weight:850;min-width:0}
+.online-actions{display:flex;gap:.55rem;flex-wrap:wrap}
+.share-line{padding:.65rem;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.045);color:#d9cbbb;font-size:.78rem;line-height:1.35;word-break:break-word}
+.live-list{display:grid;gap:.45rem}
+.leader-row{display:grid;grid-template-columns:2rem 1fr auto;gap:.55rem;align-items:center;min-height:2.35rem;padding:.45rem;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045)}
+.leader-row strong{font-size:.86rem}
+.leader-row small{display:block;color:var(--muted);font-size:.72rem}
+.rank-badge{display:grid;place-items:center;width:2rem;height:2rem;background:rgba(0,0,0,.22);font-weight:950;color:#fbbf24}
+.score-badge{font-weight:950;color:#f7efe2}
+.teacher-layout{max-width:1320px;margin:0 auto;display:grid;gap:1rem}
+.teacher-hero{display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:end;border:1px solid rgba(255,255,255,.12);background:rgba(33,25,20,.78);box-shadow:var(--shadow);padding:1rem}
+.teacher-hero p{margin:.35rem 0 0;color:#d7c9b9;line-height:1.5;max-width:58rem}
+.teacher-title{display:grid;gap:.25rem}
+.teacher-title h1{max-width:none;font-size:2.2rem}
+.teacher-panel{border:1px solid rgba(255,255,255,.12);background:rgba(24,18,15,.72);box-shadow:var(--shadow);padding:1rem;display:grid;gap:.8rem;min-width:0}
+.teacher-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem}
+.metric{padding:.75rem;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.045);display:grid;gap:.3rem}
+.metric strong{font-size:1.45rem;color:#fbbf24}.metric span{font-size:.76rem;color:var(--muted);font-weight:850}
+.dashboard-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(20rem,.85fr);gap:1rem}
+.player-table{width:100%;border-collapse:collapse;font-size:.86rem}
+.player-table th,.player-table td{padding:.6rem;border-bottom:1px solid rgba(255,255,255,.09);text-align:left;vertical-align:top}
+.player-table th{color:var(--muted);font-size:.72rem;text-transform:uppercase}
+.delta-up{color:#86efac;font-weight:950}.delta-down{color:#fca5a5;font-weight:950}.delta-flat{color:#d6d3d1;font-weight:950}
+.progress-shell{height:.55rem;background:rgba(255,255,255,.08);overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#22c55e,#fbbf24);transform-origin:left center}
+.run-history{display:grid;gap:.55rem;max-height:34rem;overflow:auto;padding-right:.25rem}
+.run-card{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.045);padding:.65rem;display:grid;gap:.45rem}
+.run-card strong{font-size:.92rem}.run-card small{color:var(--muted)}
+.concept-chips{display:flex;gap:.35rem;flex-wrap:wrap}
+.concept-chip{padding:.28rem .45rem;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.18);font-size:.72rem;color:#fcd34d;font-weight:850}
+.event-feed{display:grid;gap:.45rem;max-height:17rem;overflow:auto}
+.event-item{padding:.55rem;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);font-size:.8rem;color:#d9cbbb}
+@media(max-width:960px){
+  .hero-row,.stage-layout,.room-stage,.attack-zone,.dashboard-grid,.teacher-hero{grid-template-columns:1fr}
+  .level-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sim-visual{display:none}
+  .stage-panel,.boss-panel{min-height:0}
+  .side-panel{order:-1}
+  .codex-list{grid-template-columns:1fr}
+  .memory-scene{min-height:17rem}
+  .teacher-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+  .topbar{align-items:flex-start}
+  .status-strip{gap:.35rem}
+  .brand-title{font-size:.92rem}
+  .brand-sub{font-size:.72rem}
+  .pill{font-size:.72rem;min-height:1.8rem}
+  .command-band{grid-template-columns:1fr;min-height:0}
+  .ledger-grid{grid-template-columns:1fr 1fr}
+  .level-grid{grid-template-columns:1fr}
+  h1{font-size:2.25rem}
+  .room-copy h3{font-size:1.55rem}
+  .stage-head,.boss-head,.stage-actions,.boss-foot{align-items:flex-start;flex-direction:column}
+  .answer-form{grid-template-columns:1fr}
+  .option-grid{grid-template-columns:1fr}
+  .form-grid,.teacher-grid{grid-template-columns:1fr}
+  .player-table{font-size:.78rem}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="game-data.js"></script>
+<script>
+(function(){
+  const DATA = window.KLEMENTINUM_LEVELS || [];
+  const META = window.KLEMENTINUM_META || { title: "Klementinum 2099", subtitle: "Labyrint poznání" };
+  const STORAGE_KEY = "klementinum-2099-progress-v3";
+  const ONLINE_STORAGE_KEY = "klementinum-2099-online-v1";
+  const RUN_HISTORY_KEY = "klementinum-2099-runs-v1";
+  const params = new URLSearchParams(location.search);
+  const app = document.getElementById("app");
+  const toast = document.getElementById("toast");
+  let timerId = null;
+  let toastId = null;
+
+  const state = {
+    view: "levels",
+    unlocked: 1,
+    xp: 0,
+    completed: {},
+    currentLevelId: 1,
+    roomIndex: 0,
+    collected: [],
+    boss: null,
+    result: null,
+    localRuns: [],
+    online: {
+      role: params.get("teacher") === "1" ? "teacher" : "student",
+      room: (params.get("room") || "KLEMENTINUM").toUpperCase(),
+      name: "",
+      playerId: "",
+      connected: false,
+      connecting: false,
+      status: "offline",
+      socket: null,
+      roomState: null,
+      lastError: ""
+    }
+  };
+
+  function loadProgress(){
+    try{
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      state.unlocked = Math.max(1, Math.min(DATA.length, Number(saved.unlocked) || 1));
+      state.xp = Number(saved.xp) || 0;
+      state.completed = saved.completed && typeof saved.completed === "object" ? saved.completed : {};
+      state.currentLevelId = Math.min(state.unlocked, DATA.length) || 1;
+    }catch(err){
+      state.unlocked = 1;
+      state.xp = 0;
+      state.completed = {};
+    }
+  }
+
+  function saveProgress(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ unlocked: state.unlocked, xp: state.xp, completed: state.completed }));
+    }catch(err){}
+  }
+
+  function loadOnlineSettings(){
+    try{
+      const saved = JSON.parse(localStorage.getItem(ONLINE_STORAGE_KEY) || "{}");
+      state.online.name = params.get("name") || saved.name || (state.online.role === "teacher" ? "Vyučující" : "Student");
+      state.online.room = (params.get("room") || saved.room || state.online.room || "KLEMENTINUM").toUpperCase();
+      state.online.playerId = saved.playerId || cryptoId();
+      state.localRuns = JSON.parse(localStorage.getItem(RUN_HISTORY_KEY) || "[]");
+    }catch(err){
+      state.online.name = state.online.role === "teacher" ? "Vyučující" : "Student";
+      state.online.playerId = cryptoId();
+      state.localRuns = [];
+    }
+  }
+
+  function saveOnlineSettings(){
+    try{
+      localStorage.setItem(ONLINE_STORAGE_KEY, JSON.stringify({
+        name: state.online.name,
+        room: state.online.room,
+        playerId: state.online.playerId
+      }));
+    }catch(err){}
+  }
+
+  function saveLocalRuns(){
+    try{
+      localStorage.setItem(RUN_HISTORY_KEY, JSON.stringify(state.localRuns.slice(-40)));
+    }catch(err){}
+  }
+
+  function cryptoId(){
+    if(window.crypto?.randomUUID) return window.crypto.randomUUID();
+    return "p-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+  }
+
+  function h(value){
+    return String(value ?? "").replace(/[&<>"']/g, ch => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "\"":"&quot;", "'":"&#39;" }[ch]));
+  }
+
+  function getLevel(id){
+    return DATA.find(level => level.id === Number(id)) || DATA[0];
+  }
+
+  function activeLevel(){
+    return getLevel(state.currentLevelId);
+  }
+
+  function stopTimer(){
+    if(timerId){
+      clearInterval(timerId);
+      timerId = null;
+    }
+  }
+
+  function rankTitle(){
+    if(state.xp >= 3600) return "Mistr paměťového paláce";
+    if(state.xp >= 2200) return "Kartograf znalostí";
+    if(state.xp >= 1100) return "Archivář vjemů";
+    if(state.xp >= 450) return "Učeň Loci";
+    return "Nový student";
+  }
+
+  function setView(view){
+    if(state.view === "boss" && view !== "boss") stopTimer();
+    state.view = view;
+    render();
+  }
+
+  function shell(content){
+    const finished = Object.keys(state.completed).length;
+    return `
+      <div class="app-shell">
+        <header class="topbar">
+          <div class="brand">
+            <div class="brand-mark">K</div>
+            <div>
+              <div class="brand-title">${h(META.title)}</div>
+              <div class="brand-sub">${h(META.subtitle)} · ${h(rankTitle())}</div>
+            </div>
+          </div>
+          <div class="status-strip">
+            <span class="pill"><span class="status-dot ${state.online.connected ? "is-online" : ""}"></span>${state.online.connected ? h(state.online.room) : "offline"}</span>
+            <span class="pill">XP ${h(state.xp)}</span>
+            <span class="pill">Levely ${h(finished)}/${h(DATA.length)}</span>
+            <button class="icon-btn" data-action="teacher-view" title="Dashboard učitele">▥</button>
+            <button class="icon-btn" data-action="levels" title="Výběr levelů">⌂</button>
+          </div>
+        </header>
+        <main>${content}</main>
+      </div>`;
+  }
+
+  function render(){
+    if(state.view !== "boss") stopTimer();
+    if(state.view === "levels") renderLevels();
+    if(state.view === "explore") renderExplore();
+    if(state.view === "boss") renderBoss();
+    if(state.view === "result") renderResult();
+    if(state.view === "teacher") renderTeacherDashboard();
+  }
+
+  function connectionLabel(){
+    if(state.online.connected) return "Připojeno";
+    if(state.online.connecting) return "Připojuji";
+    return state.online.lastError || "Offline režim";
+  }
+
+  function shareUrl(role){
+    const url = new URL(location.href);
+    if(location.protocol === "file:") {
+      url.protocol = "http:";
+      url.host = "localhost:8787";
+      url.pathname = "/";
+    }
+    url.search = "";
+    url.searchParams.set("room", state.online.room || "KLEMENTINUM");
+    if(role === "teacher") url.searchParams.set("teacher", "1");
+    return url.toString();
+  }
+
+  function renderLiveLeaderboard(limit = 5){
+    const board = state.online.roomState?.leaderboard || [];
+    if(!board.length) return `<div class="share-line">Až se připojí studenti, objeví se tady živý žebříček.</div>`;
+    return `<div class="live-list">${board.slice(0, limit).map((player, index) => `
+      <div class="leader-row">
+        <span class="rank-badge">${index + 1}</span>
+        <div><strong>${h(player.name)}</strong><small>${h(player.current?.phase || (player.online ? "online" : "offline"))}</small></div>
+        <span class="score-badge">${h(player.totals.score)}</span>
+      </div>`).join("")}</div>`;
+  }
+
+  function renderOnlinePanel(){
+    const studentUrl = shareUrl("student");
+    const teacherUrl = shareUrl("teacher");
+    return `
+      <section class="online-panel">
+        <div class="online-status">
+          <h2>Online soutěž</h2>
+          <span><span class="status-dot ${state.online.connected ? "is-online" : ""}"></span> ${h(connectionLabel())}</span>
+        </div>
+        <div class="form-grid">
+          <label class="field"><span>Jméno</span><input class="text-input" data-role="online-name" value="${h(state.online.name)}" placeholder="Student"></label>
+          <label class="field"><span>Místnost</span><input class="text-input" data-role="online-room" value="${h(state.online.room)}" placeholder="KLEMENTINUM"></label>
+        </div>
+        <div class="online-actions">
+          <button class="primary" data-action="connect-online">${state.online.connected ? "Obnovit spojení" : "Připojit online"}</button>
+          <button class="ghost" data-action="disconnect-online">Odpojit</button>
+          <button class="ghost" data-action="teacher-view">Dashboard učitele</button>
+        </div>
+        <div class="share-line">Studenti: ${h(studentUrl)}<br>Učitel: ${h(teacherUrl)}</div>
+        ${renderLiveLeaderboard(5)}
+      </section>`;
+  }
+
+  function syncOnlineForm(){
+    const nameInput = app.querySelector("[data-role='online-name']");
+    const roomInput = app.querySelector("[data-role='online-room']");
+    if(nameInput) state.online.name = nameInput.value.trim() || (state.online.role === "teacher" ? "Vyučující" : "Student");
+    if(roomInput) state.online.room = (roomInput.value.trim() || "KLEMENTINUM").toUpperCase();
+    saveOnlineSettings();
+  }
+
+  function websocketUrl(){
+    if(location.protocol === "http:" || location.protocol === "https:"){
+      return `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws`;
+    }
+    return "ws://localhost:8787/ws";
+  }
+
+  function connectOnline(role = state.online.role){
+    syncOnlineForm();
+    disconnectOnline(false);
+    state.online.role = role;
+    state.online.connecting = true;
+    state.online.lastError = "";
+    if(state.view === "levels" || state.view === "teacher") render();
+    try{
+      const socket = new WebSocket(websocketUrl());
+      state.online.socket = socket;
+      socket.addEventListener("open", () => {
+        state.online.connected = true;
+        state.online.connecting = false;
+        sendOnline("hello", {
+          room: state.online.room,
+          name: state.online.name,
+          role: state.online.role,
+          playerId: state.online.playerId
+        });
+        publishStatus("online");
+        showToast("Online místnost je připojená.");
+        if(state.view === "levels" || state.view === "teacher") render();
+      });
+      socket.addEventListener("message", event => handleOnlineMessage(event.data));
+      socket.addEventListener("close", () => {
+        if(state.online.socket !== socket) return;
+        state.online.connected = false;
+        state.online.connecting = false;
+        state.online.status = "offline";
+        if(state.view === "levels" || state.view === "teacher") render();
+      });
+      socket.addEventListener("error", () => {
+        if(state.online.socket !== socket) return;
+        state.online.lastError = "Server neběží";
+        state.online.connected = false;
+        state.online.connecting = false;
+        if(state.view === "levels" || state.view === "teacher") render();
+      });
+    }catch(err){
+      state.online.connected = false;
+      state.online.connecting = false;
+      state.online.lastError = "WebSocket nelze otevřít";
+      render();
+    }
+  }
+
+  function disconnectOnline(show = true){
+    if(state.online.socket){
+      try{ state.online.socket.close(); }catch(err){}
+    }
+    state.online.socket = null;
+    state.online.connected = false;
+    state.online.connecting = false;
+    if(show) showToast("Online režim odpojen.");
+  }
+
+  function sendOnline(type, payload = {}){
+    const socket = state.online.socket;
+    if(!socket || socket.readyState !== WebSocket.OPEN) return false;
+    socket.send(JSON.stringify({ type, ...payload }));
+    return true;
+  }
+
+  function handleOnlineMessage(raw){
+    let message;
+    try{ message = JSON.parse(raw); }catch(err){ return; }
+    if(message.type === "hello:ok"){
+      state.online.playerId = message.playerId || state.online.playerId;
+      state.online.room = message.room || state.online.room;
+      saveOnlineSettings();
+      return;
+    }
+    if(message.type === "room:state"){
+      state.online.roomState = message.room;
+      if(state.view === "teacher" || state.view === "levels") render();
+    }
+  }
+
+  function currentOnlineStatus(phase){
+    const level = activeLevel();
+    const boss = state.boss;
+    return {
+      phase: phase || (state.view === "boss" ? "Boss fight" : state.view === "explore" ? "Kóduje kotvy" : state.view === "result" ? "Výsledek" : "Lobby"),
+      view: state.view,
+      levelId: level?.id || 0,
+      levelTitle: level?.title || "",
+      roomIndex: state.roomIndex + 1,
+      roomsTotal: level?.rooms?.length || 7,
+      xp: state.xp,
+      score: boss?.score || 0,
+      combo: boss?.combo || 0,
+      stability: boss?.stability ?? null,
+      answerIndex: boss ? boss.index + 1 : null,
+      updatedAt: Date.now()
+    };
+  }
+
+  function publishStatus(phase){
+    if(!state.online.connected || state.online.role === "teacher") return;
+    sendOnline("player:update", {
+      name: state.online.name,
+      current: currentOnlineStatus(phase)
+    });
+  }
+
+  function renderLevels(){
+    const nextLevel = getLevel(Math.min(state.unlocked, DATA.length));
+    const clearedRooms = Object.values(state.completed).reduce((sum, item) => sum + (item.rooms || 0), 0);
+    const bestScore = Object.values(state.completed).reduce((sum, item) => sum + (item.best || 0), 0);
+    const cards = DATA.map(level => {
+      const locked = level.id > state.unlocked;
+      const done = state.completed[level.id];
+      const style = `--level-color:${level.color};--accent-color:${level.accent}`;
+      return `
+        <button class="level-card ${locked ? "is-locked" : ""} ${level.id === state.currentLevelId ? "is-active" : ""}" style="${style}" data-action="start-level" data-id="${level.id}" ${locked ? "disabled" : ""}>
+          ${locked ? `<span class="lock-badge">Zamčeno</span>` : ""}
+          <span class="level-glyph">${h(level.glyph)}</span>
+          <h2>${h(level.id)}. ${h(level.title)}</h2>
+          <p>${h(level.mood)}</p>
+          <span class="level-meta"><span>${h(level.place)}</span><span>${done ? "Hotovo" : "7 kotev"}</span></span>
+        </button>`;
+    }).join("");
+
+    app.innerHTML = shell(`
+      <section class="levels-layout">
+        <div class="hero-row">
+          <section class="command-band">
+            <div class="command-copy">
+              <div>
+                <p class="kicker">Paměťový simulátor ÚISK</p>
+                <h1>Klementinum 2099</h1>
+              </div>
+              <p>Každý pojem má místo, tělo a divný vjem. Projdi palác, uzamkni sedm kotev a pak je vytáhni z hlavy dřív, než je sežere zapomínání.</p>
+              <div class="hero-actions">
+                <button class="primary" data-action="start-level" data-id="${nextLevel.id}">Pokračovat: ${h(nextLevel.title)}</button>
+                <button class="ghost" data-action="reset-progress">Nový běh</button>
+                <button class="ghost" data-action="connect-online">Zapnout online</button>
+              </div>
+            </div>
+            <div class="sim-visual" aria-hidden="true"><div class="sim-core">${h(nextLevel.glyph)}</div></div>
+          </section>
+          <aside class="memory-ledger">
+            <h2 class="ledger-title">Stav simulace</h2>
+            <div class="ledger-grid">
+              <div class="ledger-cell"><div class="ledger-value">${h(state.unlocked)}</div><div class="ledger-label">odemčený level</div></div>
+              <div class="ledger-cell"><div class="ledger-value">${h(clearedRooms)}</div><div class="ledger-label">ukotvených pojmů</div></div>
+              <div class="ledger-cell"><div class="ledger-value">${h(bestScore)}</div><div class="ledger-label">součet boss skóre</div></div>
+            </div>
+          </aside>
+        </div>
+        ${renderOnlinePanel()}
+        <section class="level-grid">${cards}</section>
+      </section>`);
+  }
+
+  function deltaHtml(value, suffix = ""){
+    if(value === null || value === undefined) return `<span class="delta-flat">první pokus</span>`;
+    const rounded = Math.round(value * 10) / 10;
+    if(rounded > 0) return `<span class="delta-up">+${h(rounded)}${suffix}</span>`;
+    if(rounded < 0) return `<span class="delta-down">${h(rounded)}${suffix}</span>`;
+    return `<span class="delta-flat">0${suffix}</span>`;
+  }
+
+  function eventText(event){
+    if(event.kind === "join") return `${event.playerName} se připojuje do místnosti.`;
+    if(event.kind === "leave") return `${event.playerName} opouští místnost.`;
+    if(event.kind === "run-win") return `${event.playerName} dokončil level ${event.levelId}: paměť ${event.memoryIndex}, riziko ${event.forgettingRisk}.`;
+    if(event.kind === "run-loss") return `${event.playerName} prohrál level ${event.levelId}: riziko zapomínání ${event.forgettingRisk}.`;
+    if(event.kind === "reset") return `${event.playerName} vyčistil třídní statistiky.`;
+    return "Aktualizace místnosti.";
+  }
+
+  function conceptWeakness(players){
+    const map = new Map();
+    for(const player of players){
+      for(const run of player.runs || []){
+        for(const item of run.concepts || []){
+          const key = item.concept || "Pojem";
+          const entry = map.get(key) || { concept: key, misses: 0, slow: 0, total: 0 };
+          entry.total += 1;
+          if(!item.correct) entry.misses += 1;
+          if(item.reactionMs > 9000) entry.slow += 1;
+          map.set(key, entry);
+        }
+      }
+    }
+    return [...map.values()]
+      .map(item => ({ ...item, risk: item.misses * 3 + item.slow + Math.max(0, 3 - item.total) }))
+      .sort((a, b) => b.risk - a.risk)
+      .slice(0, 10);
+  }
+
+  function renderTeacherDashboard(){
+    state.online.role = "teacher";
+    const room = state.online.roomState || { code: state.online.room, classStats: {}, players: [], leaderboard: [], events: [] };
+    const players = (room.players || []).filter(player => player.role !== "teacher");
+    const classStats = room.classStats || {};
+    const weak = conceptWeakness(players);
+    const rows = players.length ? players.map(player => {
+      const current = player.current || {};
+      const last = player.lastRun || {};
+      const delta = player.delta || {};
+      return `<tr>
+        <td><strong>${h(player.name)}</strong><br><small>${player.online ? "online" : "offline"}</small></td>
+        <td>${h(current.phase || "čeká")}<br><small>L${h(current.levelId || "-")} · ${h(current.roomIndex || 0)}/${h(current.roomsTotal || 7)}</small></td>
+        <td>${h(player.runs?.length || 0)}</td>
+        <td>${h(last.score || 0)}<br><small>${deltaHtml(delta.score || null)}</small></td>
+        <td>${h(last.accuracy || 0)} %<br><small>${deltaHtml(delta.accuracy || null, " b")}</small></td>
+        <td>${h(last.memoryIndex || 0)}<div class="progress-shell"><div class="progress-fill" style="transform:scaleX(${Math.max(0, Math.min(100, last.memoryIndex || 0)) / 100})"></div></div></td>
+        <td>${h(last.forgettingRisk || 0)}<br><small>${deltaHtml(delta.forgettingRisk ? -delta.forgettingRisk : null)}</small></td>
+      </tr>`;
+    }).join("") : `<tr><td colspan="7">Zatím nejsou připojení žádní studenti.</td></tr>`;
+    const histories = players.map(player => `
+      <div class="run-card">
+        <strong>${h(player.name)}</strong>
+        <small>${h(player.runs?.length || 0)} pokusů · nejlepší skóre ${h(Math.max(0, ...(player.runs || []).map(run => run.score || 0)))}</small>
+        <div class="run-history">
+          ${(player.runs || []).slice(-5).reverse().map(run => `
+            <div class="share-line">#${h(run.runNo)} L${h(run.levelId)} ${run.ok ? "úspěch" : "pád"} · paměť ${h(run.memoryIndex)} · přesnost ${h(run.accuracy)} % · reakce ${h((run.avgReaction/1000).toFixed(1))} s</div>
+          `).join("") || `<div class="share-line">Bez dokončeného pokusu.</div>`}
+        </div>
+      </div>`).join("");
+    const events = (room.events || []).slice(-12).reverse().map(event => `<div class="event-item">${h(eventText(event))}</div>`).join("") || `<div class="event-item">Čekám na první živou událost.</div>`;
+
+    app.innerHTML = shell(`
+      <section class="teacher-layout">
+        <div class="teacher-hero">
+          <div class="teacher-title">
+            <p class="kicker">Srovnávací dashboard</p>
+            <h1>Učitel · ${h(room.code || state.online.room)}</h1>
+            <p>Dashboard sleduje živý postup, přesnost vybavování, reakční čas, nápovědy a riziko zapomínání. Rozdíly se počítají vždy proti předchozímu pokusu stejného studenta.</p>
+          </div>
+          <div class="online-actions">
+            <button class="primary" data-action="connect-teacher">${state.online.connected ? "Obnovit dashboard" : "Připojit dashboard"}</button>
+            <button class="ghost" data-action="teacher-reset">Vyčistit statistiky</button>
+            <button class="ghost" data-action="levels">Studentský pohled</button>
+          </div>
+        </div>
+        <section class="online-panel">
+          <div class="form-grid">
+            <label class="field"><span>Jméno učitele</span><input class="text-input" data-role="online-name" value="${h(state.online.name)}"></label>
+            <label class="field"><span>Místnost</span><input class="text-input" data-role="online-room" value="${h(state.online.room)}"></label>
+          </div>
+          <div class="share-line">Sdílet studentům: ${h(shareUrl("student"))}</div>
+        </section>
+        <section class="teacher-grid">
+          <div class="metric"><strong>${h(room.activeStudents || 0)}</strong><span>aktivních studentů</span></div>
+          <div class="metric"><strong>${h(classStats.accuracy || 0)} %</strong><span>třídní přesnost</span></div>
+          <div class="metric"><strong>${h(classStats.avgMemoryIndex || 0)}</strong><span>průměrný index paměti</span></div>
+          <div class="metric"><strong>${h(classStats.avgForgettingRisk || 0)}</strong><span>riziko zapomínání</span></div>
+        </section>
+        <section class="dashboard-grid">
+          <article class="teacher-panel">
+            <h2>Studenti v reálném čase</h2>
+            <table class="player-table">
+              <thead><tr><th>Hráč</th><th>Stav</th><th>Pokusy</th><th>Skóre Δ</th><th>Přesnost Δ</th><th>Paměť</th><th>Zapomínání</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </article>
+          <aside class="teacher-panel">
+            <h2>Rizikové pojmy třídy</h2>
+            <div class="concept-chips">${weak.map(item => `<span class="concept-chip">${h(item.concept)} · ${h(item.misses)} chyb</span>`).join("") || `<span class="concept-chip">Zatím žádná data</span>`}</div>
+            <h3>Živý žebříček</h3>
+            ${renderLiveLeaderboard(8)}
+            <h3>Události</h3>
+            <div class="event-feed">${events}</div>
+          </aside>
+        </section>
+        <section class="teacher-panel">
+          <h2>Rozdílová analýza pokusů</h2>
+          <div class="run-history">${histories || `<div class="share-line">Jakmile studenti dokončí opakované pokusy, uvidíš zde trend po každé hře.</div>`}</div>
+        </section>
+      </section>`);
+  }
+
+  function startLevel(id){
+    const level = getLevel(id);
+    if(!level || level.id > state.unlocked) return;
+    state.currentLevelId = level.id;
+    state.roomIndex = 0;
+    state.collected = [];
+    state.boss = null;
+    setView("explore");
+    publishStatus("Začíná level");
+  }
+
+  function renderExplore(){
+    const level = activeLevel();
+    const room = level.rooms[state.roomIndex];
+    const isLast = state.roomIndex === level.rooms.length - 1;
+    const style = `--level-color:${level.color};--accent-color:${level.accent}`;
+    const dots = level.rooms.map((_, index) => `<span class="path-dot ${index < state.roomIndex ? "is-done" : ""} ${index === state.roomIndex ? "is-current" : ""}">${index + 1}</span>`).join("");
+    const memoryItems = level.rooms.map((item, index) => {
+      const active = index < state.roomIndex || state.collected.includes(index);
+      return `<div class="memory-item ${active ? "" : "is-empty"}"><span>${active ? h(item.symbol) : "·"}</span><div><strong>${active ? h(item.concept) : "Neukotveno"}</strong><small>${active ? h(item.anchor) : "čeká v paláci"}</small></div></div>`;
+    }).join("");
+
+    app.innerHTML = shell(`
+      <section class="stage-layout" style="${style}">
+        <article class="stage-panel">
+          <div class="stage-head">
+            <div class="stage-title"><p>${h(level.title)} · ${h(level.place)}</p><h2>${h(room.anchor)}</h2></div>
+            <div class="path-dots" aria-label="Postup levelem">${dots}</div>
+          </div>
+          <div class="room-stage">
+            <div class="memory-scene" aria-hidden="true">
+              <span class="spark s1"></span><span class="spark s2"></span><span class="spark s3"></span><span class="spark s4"></span>
+              <div class="artifact">${h(room.symbol)}</div>
+            </div>
+            <div class="room-copy">
+              <p class="anchor-label">Prostorová kotva ${state.roomIndex + 1}/7</p>
+              <h3>${h(room.concept)}</h3>
+              <p class="scene-text">${h(room.scene)}</p>
+              <div class="concept-strip">
+                <span class="concept-symbol">${h(room.symbol)}</span>
+                <div><p>Smyslový kód</p><strong>${h(room.sensory)}</strong></div>
+              </div>
+              <p class="sensory-box">${h(room.cue)}</p>
+            </div>
+          </div>
+          <div class="stage-actions">
+            <button class="ghost" data-action="levels">Zpět na levely</button>
+            <button class="primary" data-action="next-room">${isLast ? "Postavit se monstru" : "Uložit vjem"}</button>
+          </div>
+        </article>
+        <aside class="side-panel">
+          <div class="codex-list"><h3>Paměťové kotvy</h3>${memoryItems}</div>
+          ${state.online.connected ? `<div class="online-panel"><h3>Živá soutěž</h3>${renderLiveLeaderboard(6)}</div>` : ""}
+        </aside>
+      </section>`);
+  }
+
+  function collectRoom(){
+    if(!state.collected.includes(state.roomIndex)) state.collected.push(state.roomIndex);
+    const level = activeLevel();
+    if(state.roomIndex < level.rooms.length - 1){
+      state.roomIndex += 1;
+      showToast("Vjem uložen do paláce.");
+      renderExplore();
+      publishStatus("Kóduje kotvy");
+    }else{
+      startBoss();
+    }
+  }
+
+  function shuffle(list){
+    const copy = list.slice();
+    for(let i = copy.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function startBoss(){
+    const level = activeLevel();
+    const questions = shuffle(level.rooms).map(room => {
+      const wrong = shuffle(level.rooms.filter(item => item.concept !== room.concept).map(item => item.concept)).slice(0,3);
+      return { room, options: shuffle([room.concept, ...wrong]) };
+    });
+    state.boss = {
+      levelId: level.id,
+      questions,
+      index: 0,
+      stability: 3,
+      monsterHp: questions.length,
+      combo: 0,
+      score: 0,
+      showOptions: false,
+      locked: false,
+      result: null,
+      answers: [],
+      hints: 0,
+      startedAt: Date.now(),
+      questionStartedAt: Date.now(),
+      limit: 16000,
+      deadline: Date.now() + 16000
+    };
+    setView("boss");
+    publishStatus("Boss fight");
+  }
+
+  function renderBoss(){
+    const level = activeLevel();
+    const boss = state.boss;
+    if(!boss){
+      startBoss();
+      return;
+    }
+    const question = boss.questions[boss.index];
+    const room = question.room;
+    const style = `--level-color:${level.color};--accent-color:${level.accent}`;
+    const hearts = [0,1,2].map(index => `<span class="heart ${index < boss.stability ? "" : "is-empty"}">♥</span>`).join("");
+    const options = boss.showOptions ? `<div class="option-grid">${question.options.map(option => {
+      const status = boss.result ? (option === room.concept ? "is-correct" : option === boss.result.submitted ? "is-wrong" : "") : "";
+      return `<button class="option-btn ${status}" data-action="choose-answer" data-answer="${h(option)}" ${boss.locked ? "disabled" : ""}>${h(option)}</button>`;
+    }).join("")}</div>` : "";
+    const result = boss.result ? `<div class="result-banner ${boss.result.correct ? "ok" : "bad"}">${boss.result.correct ? "Správně ukotveno" : `Rozpad paměti: ${h(room.concept)}`}</div>` : "";
+
+    app.innerHTML = shell(`
+      <section class="boss-layout" style="${style}">
+        <article class="boss-panel">
+          <div class="boss-head">
+            <div class="boss-title"><h2>Monstrum zapomínání</h2><p>${h(level.boss)}</p></div>
+            <div class="meter-row"><div>${hearts}</div><div class="timer-shell"><span id="timerText">16s</span><div id="timerBar" class="timer-bar"></div></div></div>
+          </div>
+          <div class="attack-zone">
+            <div class="monster" aria-hidden="true"><div class="monster-core">${h(level.glyph)}</div></div>
+            <div class="attack-copy">
+              <p class="attack-label">Izolovaný smyslový vjem ${boss.index + 1}/7</p>
+              <p class="attack-text">${h(room.cue)}</p>
+              <form class="answer-form" data-role="answer-form">
+                <input name="answer" autocomplete="off" placeholder="Zapiš pojem" ${boss.locked ? "disabled" : ""}>
+                <button class="primary" type="submit" ${boss.locked ? "disabled" : ""}>Ověřit</button>
+              </form>
+              <button class="ghost" data-action="show-options" ${boss.locked || boss.showOptions ? "disabled" : ""}>Nápověda</button>
+              ${options}
+              ${result}
+              ${state.online.connected ? `<div class="online-panel"><h3>Živý žebříček místnosti</h3>${renderLiveLeaderboard(5)}</div>` : ""}
+            </div>
+          </div>
+          <div class="boss-foot"><span>HP monstra: ${h(boss.monsterHp)}</span><span class="combo">Combo ${h(boss.combo)}</span><span>Skóre ${h(boss.score)}</span></div>
+        </article>
+      </section>`);
+    if(!boss.locked) startBossClock();
+    const input = app.querySelector("input[name='answer']");
+    if(input && !boss.showOptions) input.focus({ preventScroll: true });
+  }
+
+  function startBossClock(){
+    stopTimer();
+    updateBossClock();
+    timerId = setInterval(updateBossClock, 180);
+  }
+
+  function updateBossClock(){
+    const boss = state.boss;
+    if(state.view !== "boss" || !boss || boss.locked) return;
+    const remaining = Math.max(0, boss.deadline - Date.now());
+    const fraction = Math.max(0, Math.min(1, remaining / boss.limit));
+    const timerText = document.getElementById("timerText");
+    const timerBar = document.getElementById("timerBar");
+    if(timerText) timerText.textContent = Math.ceil(remaining / 1000) + "s";
+    if(timerBar) timerBar.style.transform = `scaleX(${fraction})`;
+    if(remaining <= 0) resolveBoss(false, "");
+  }
+
+  function normalize(value){
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/\(.+?\)/g, "")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+  }
+
+  function accepted(room, answer){
+    const normalized = normalize(answer);
+    if(!normalized) return false;
+    return [room.concept, ...(room.aliases || [])].some(item => normalize(item) === normalized);
+  }
+
+  function submitTyped(form){
+    const boss = state.boss;
+    if(!boss || boss.locked) return;
+    const room = boss.questions[boss.index].room;
+    const answer = new FormData(form).get("answer");
+    resolveBoss(accepted(room, answer), String(answer || ""), "typed");
+  }
+
+  function resolveBoss(correct, submitted, mode){
+    const boss = state.boss;
+    if(!boss || boss.locked) return;
+    stopTimer();
+    const room = boss.questions[boss.index].room;
+    const reactionMs = Math.max(0, Date.now() - (boss.questionStartedAt || Date.now()));
+    boss.locked = true;
+    boss.result = { correct, submitted };
+    boss.answers.push({
+      concept: room.concept,
+      levelId: boss.levelId,
+      correct,
+      submitted: submitted || "",
+      reactionMs,
+      hinted: Boolean(boss.showOptions),
+      at: Date.now()
+    });
+    if(correct){
+      const left = Math.max(0, boss.deadline - Date.now());
+      const speedBonus = Math.ceil(left / 1000) * 8;
+      const typeBonus = mode === "typed" ? 55 : 25;
+      boss.combo += 1;
+      boss.monsterHp -= 1;
+      boss.score += 100 + typeBonus + speedBonus + boss.combo * 12;
+      state.xp += 35 + boss.combo * 3;
+      showToast("Kotva drží. Monstrum slábne.");
+    }else{
+      boss.combo = 0;
+      boss.stability -= 1;
+      showToast("Paměť se trhá. Správně: " + room.concept);
+    }
+    renderBoss();
+    publishStatus(correct ? "Správná odpověď" : "Chybná odpověď");
+    setTimeout(() => advanceBoss(), correct ? 900 : 1350);
+  }
+
+  function buildRun(boss, ok, finalScore){
+    const level = getLevel(boss.levelId);
+    const answers = boss.answers || [];
+    const totalAnswers = answers.length;
+    const correctAnswers = answers.filter(answer => answer.correct).length;
+    const wrongAnswers = totalAnswers - correctAnswers;
+    const avgReaction = totalAnswers ? Math.round(answers.reduce((sum, answer) => sum + answer.reactionMs, 0) / totalAnswers) : 0;
+    const accuracy = totalAnswers ? Math.round((correctAnswers / totalAnswers) * 1000) / 10 : 0;
+    const speedScore = Math.max(0, 100 - Math.round(avgReaction / 160));
+    const hintPenalty = (boss.hints || 0) * 8;
+    const memoryIndex = Math.max(0, Math.min(100, Math.round(accuracy * .62 + speedScore * .23 + Math.max(0, 100 - hintPenalty) * .15)));
+    const forgettingRisk = Math.max(0, Math.min(100, Math.round(100 - memoryIndex + wrongAnswers * 5 + (boss.hints || 0) * 4)));
+    return {
+      id: cryptoId(),
+      runNo: state.localRuns.length + 1,
+      levelId: level.id,
+      levelTitle: level.title,
+      ok,
+      score: finalScore,
+      accuracy,
+      avgReaction,
+      totalAnswers,
+      correctAnswers,
+      wrongAnswers,
+      hints: boss.hints || 0,
+      memoryIndex,
+      forgettingRisk,
+      durationMs: Math.max(0, Date.now() - (boss.startedAt || Date.now())),
+      completedAt: Date.now(),
+      concepts: answers.map(answer => ({
+        concept: answer.concept,
+        levelId: answer.levelId,
+        correct: answer.correct,
+        reactionMs: answer.reactionMs,
+        hinted: answer.hinted
+      }))
+    };
+  }
+
+  function recordRun(run){
+    state.localRuns = [...state.localRuns, run].slice(-40);
+    saveLocalRuns();
+    sendOnline("run:complete", { run });
+  }
+
+  function advanceBoss(){
+    const boss = state.boss;
+    if(!boss) return;
+    if(boss.stability <= 0){
+      const run = buildRun(boss, false, boss.score);
+      recordRun(run);
+      state.result = { ok: false, levelId: boss.levelId, score: boss.score, run };
+      setView("result");
+      return;
+    }
+    if(boss.index >= boss.questions.length - 1){
+      completeLevel();
+      return;
+    }
+    boss.index += 1;
+    boss.showOptions = false;
+    boss.locked = false;
+    boss.result = null;
+    boss.questionStartedAt = Date.now();
+    boss.deadline = Date.now() + boss.limit;
+    renderBoss();
+    publishStatus("Boss fight");
+  }
+
+  function completeLevel(){
+    const boss = state.boss;
+    const level = getLevel(boss.levelId);
+    const existing = state.completed[level.id]?.best || 0;
+    const clearBonus = boss.stability * 160 + boss.monsterHp * 30;
+    const finalScore = boss.score + clearBonus;
+    const run = buildRun(boss, true, finalScore);
+    state.xp += 220 + boss.stability * 40;
+    state.completed[level.id] = { best: Math.max(existing, finalScore), rooms: level.rooms.length };
+    if(level.id === state.unlocked && state.unlocked < DATA.length) state.unlocked += 1;
+    saveProgress();
+    recordRun(run);
+    state.result = { ok: true, levelId: level.id, score: finalScore, stability: boss.stability, run };
+    setView("result");
+  }
+
+  function renderResult(){
+    const result = state.result || { ok: true, levelId: state.currentLevelId, score: 0 };
+    const level = getLevel(result.levelId);
+    const style = `--level-color:${level.color};--accent-color:${level.accent}`;
+    const next = getLevel(Math.min(state.unlocked, DATA.length));
+    const title = result.ok ? "Palác drží" : "Synapse se rozpadla";
+    const copy = result.ok
+      ? `Level ${level.id} je ukotvený. Monstrum přišlo o další kus zapomínání a tvoje skóre je ${result.score}.`
+      : "Monstrum přerušilo vybavování. Level se dá hned znovu projít a kotvy posílit.";
+    const nextLabel = level.id === DATA.length ? "Hrát znovu" : `Další level: ${next.title}`;
+    const actions = result.ok
+      ? `<button class="primary" data-action="start-level" data-id="${next.id}">${h(nextLabel)}</button><button class="ghost" data-action="levels">Výběr levelů</button>`
+      : `<button class="primary" data-action="restart-level">Zkusit level znovu</button><button class="ghost" data-action="levels">Výběr levelů</button>`;
+    const run = result.run || null;
+    const weakConcepts = run ? (run.concepts || []).filter(item => !item.correct || item.reactionMs > 9000).slice(0, 6) : [];
+    app.innerHTML = shell(`
+      <section class="result-wrap" style="${style}">
+        <article class="result-panel">
+          <div class="result-mark">${result.ok ? "✓" : "!"}</div>
+          <h2>${h(title)}</h2>
+          <p>${h(copy)}</p>
+          ${run ? `<div class="teacher-grid" style="margin:1rem 0;text-align:left">
+            <div class="metric"><strong>${h(run.accuracy)} %</strong><span>přesnost vybavení</span></div>
+            <div class="metric"><strong>${h((run.avgReaction/1000).toFixed(1))} s</strong><span>průměrná reakce</span></div>
+            <div class="metric"><strong>${h(run.memoryIndex)}</strong><span>index paměti</span></div>
+            <div class="metric"><strong>${h(run.forgettingRisk)}</strong><span>riziko zapomínání</span></div>
+          </div>` : ""}
+          ${weakConcepts.length ? `<p><strong>Posílit příště:</strong> ${weakConcepts.map(item => h(item.concept)).join(", ")}</p>` : ""}
+          <div class="hero-actions" style="justify-content:center">${actions}</div>
+        </article>
+      </section>`);
+  }
+
+  function showOptions(){
+    const boss = state.boss;
+    if(!boss || boss.locked || boss.showOptions) return;
+    boss.showOptions = true;
+    boss.hints += 1;
+    boss.score = Math.max(0, boss.score - 25);
+    renderBoss();
+    publishStatus("Používá nápovědu");
+  }
+
+  function resetProgress(){
+    stopTimer();
+    state.unlocked = 1;
+    state.xp = 0;
+    state.completed = {};
+    state.currentLevelId = 1;
+    state.roomIndex = 0;
+    state.collected = [];
+    state.boss = null;
+    saveProgress();
+    showToast("Nový běh připraven.");
+    setView("levels");
+  }
+
+  function showToast(message){
+    clearTimeout(toastId);
+    toast.textContent = message;
+    toast.classList.add("is-live");
+    toastId = setTimeout(() => toast.classList.remove("is-live"), 1800);
+  }
+
+  app.addEventListener("click", event => {
+    const target = event.target.closest("[data-action]");
+    if(!target) return;
+    const action = target.dataset.action;
+    if(action === "levels") setView("levels");
+    if(action === "teacher-view") setView("teacher");
+    if(action === "start-level") startLevel(target.dataset.id);
+    if(action === "next-room") collectRoom();
+    if(action === "restart-level") startLevel(state.currentLevelId);
+    if(action === "show-options") showOptions();
+    if(action === "choose-answer"){
+      const boss = state.boss;
+      if(!boss || boss.locked) return;
+      const room = boss.questions[boss.index].room;
+      resolveBoss(target.dataset.answer === room.concept, target.dataset.answer, "choice");
+    }
+    if(action === "reset-progress") resetProgress();
+    if(action === "connect-online") connectOnline("student");
+    if(action === "connect-teacher") connectOnline("teacher");
+    if(action === "disconnect-online") disconnectOnline(true);
+    if(action === "teacher-reset") sendOnline("teacher:reset");
+  });
+
+  app.addEventListener("submit", event => {
+    if(event.target.matches("[data-role='answer-form']")){
+      event.preventDefault();
+      submitTyped(event.target);
+    }
+  });
+
+  loadProgress();
+  loadOnlineSettings();
+  if(state.online.role === "teacher") state.view = "teacher";
+  render();
+})();
+</script>
+</body>
+</html>

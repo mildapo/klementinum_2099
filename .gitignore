@@ -1,0 +1,5 @@
+.gemini/
+antigravity-ide/
+*.log
+.DS_Store
+Thumbs.db
