@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛</text></svg>">
+<link rel="manifest" href="manifest.json">
 <title>Klementinum 2099 - Labyrint poznání</title>
 <style>
 :root{
@@ -257,6 +258,9 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
 <script src="game-data.js"></script>
 <script src="qrcode.min.js"></script>
 <script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(err => console.error("SW fail:", err));
+}
 // Použití stabilní externí knihovny qrcode.js
 (function(){
   function renderQR(canvas,text,moduleSize){
@@ -990,7 +994,10 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
         </section>
         <section class="dashboard-grid">
           <article class="teacher-panel">
-            <h2>Studenti v reálném čase</h2>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <h2 style="margin:0;">Studenti v reálném čase</h2>
+              <button class="ghost" data-action="export-csv" style="min-height:2.2rem; padding:0.4rem 0.8rem; font-size:0.85rem;">⬇ CSV Export</button>
+            </div>
             <div class="table-responsive">
               <table class="player-table">
                 <thead><tr><th>Hráč</th><th>Stav</th><th>Pokusy</th><th>Skóre Δ</th><th>Přesnost Δ</th><th>Paměť</th><th>Zapomínání</th></tr></thead>
@@ -1485,6 +1492,36 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
     toast.textContent = message;
     toast.classList.add("is-live");
     toastId = setTimeout(() => toast.classList.remove("is-live"), 1800);
+  }
+
+  function exportToCSV() {
+    if(!state.online.roomState || !state.online.roomState.players) return showToast("Žádná data pro export.");
+    const players = Object.values(state.online.roomState.players);
+    if(players.length === 0) return showToast("Žádná data pro export.");
+    
+    let csv = "Hrac,Stav,Pokusy,Skore,Presnost,PocetChyb,IndexPameti,RizikoZapominani\n";
+    players.forEach(p => {
+      const isOnline = Date.now() - p.lastSeen < 12000;
+      const status = isOnline ? "Online" : "Offline";
+      const totalRuns = p.totals?.runs || 0;
+      const totalScore = p.totals?.score || 0;
+      const accuracy = p.totals?.accuracy || 0;
+      const memIndex = p.lastRun?.memoryIndex || 0;
+      const risk = p.lastRun?.forgettingRisk || 0;
+      const totalMisses = p.totals?.misses || 0;
+      csv += `${p.name},${status},${totalRuns},${totalScore},${accuracy}%,${totalMisses},${memIndex},${risk}\n`;
+    });
+    
+    const blob = new Blob([csv], {type: "text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Klementinum_export_${new Date().toISOString().slice(0,10)}.csv`;
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast("Export úspěšný.");
   }
 
   app.addEventListener("click", event => {

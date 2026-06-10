@@ -1,0 +1,17 @@
+{
+  "name": "Klementinum 2099",
+  "short_name": "Klem 2099",
+  "description": "Edukační paměťový simulátor",
+  "start_url": "./?room=KLEMENTINUM",
+  "display": "standalone",
+  "background_color": "#13100f",
+  "theme_color": "#13100f",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%2313100f'/><text x='50' y='65' font-size='60' text-anchor='middle'>🏛</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
