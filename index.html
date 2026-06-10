@@ -762,7 +762,7 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
         const existing = players.find(p => p.name.toLowerCase() === name.toLowerCase());
         
         if (existing) {
-          if(confirm("Hráč se jménem \\"" + existing.name + "\\" už v místnosti existuje.\\n\\nChceš se připojit k jeho profilu a pokračovat v jeho hře?")) {
+          if(confirm(`Hráč se jménem "${existing.name}" už v místnosti existuje.\n\nChceš se připojit k jeho profilu a pokračovat v jeho hře?`)) {
             state.online.name = existing.name;
             state.online.playerId = existing.id;
           } else {
@@ -786,7 +786,7 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
   }
 
   function renderLogin() {
-    app.innerHTML = \`
+    app.innerHTML = `
       <div class="header">
         <h1>Vítejte v Klementinu 2099</h1>
       </div>
@@ -798,7 +798,7 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
           <button type="submit" class="primary-btn" id="login-submit-btn" style="font-size:1.2rem;">Vstoupit do hry</button>
         </form>
       </div>
-    \`;
+    `;
   }
 
   function renderLevels(){
