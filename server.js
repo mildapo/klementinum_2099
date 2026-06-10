@@ -2,6 +2,7 @@ const http = require("http");
 const fs = require("fs/promises");
 const path = require("path");
 const crypto = require("crypto");
+const os = require("os");
 
 const PORT = Number(process.env.PORT || 8787);
 const HOST = process.env.HOST || "0.0.0.0";
@@ -77,6 +78,21 @@ async function saveStats() {
   }
 }
 
+let _saveTimeout = null;
+let _saving = false;
+function scheduleSave() {
+  if (_saveTimeout) clearTimeout(_saveTimeout);
+  _saveTimeout = setTimeout(async () => {
+    if (_saving) { scheduleSave(); return; }
+    _saving = true;
+    try { await saveStats(); } finally { _saving = false; }
+  }, 500);
+}
+
+function sanitizeName(raw, fallback) {
+  return String(raw || fallback).trim().slice(0, 40).replace(/[<>"'&]/g, "");
+}
+
 const mimeTypes = {
   ".html": "text/html; charset=utf-8",
   ".js": "application/javascript; charset=utf-8",
@@ -94,9 +110,52 @@ function safeJoin(filePath) {
   return resolved;
 }
 
+function getNetworkAddresses() {
+  const interfaces = os.networkInterfaces();
+  const addresses = [];
+  for (const [name, nets] of Object.entries(interfaces)) {
+    for (const net of nets) {
+      if (net.family === "IPv4" && !net.internal) {
+        addresses.push({ name, address: net.address });
+      }
+    }
+  }
+  return addresses;
+}
+
 async function serveStatic(req, res) {
   try {
     const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
+
+    // API endpoint: vrátí síťové adresy serveru pro QR kódy
+    if (url.pathname === "/api/network-info") {
+      const addresses = getNetworkAddresses();
+      const body = JSON.stringify({ port: PORT, addresses });
+      res.writeHead(200, {
+        "Content-Type": "application/json; charset=utf-8",
+        "Cache-Control": "no-store",
+        "Access-Control-Allow-Origin": "*"
+      });
+      res.end(body);
+      return;
+    }
+
+    // API endpoint: vrátí seznam existujících studentů v místnosti
+    if (url.pathname.startsWith("/api/room/") && url.pathname.endsWith("/players")) {
+      const code = url.pathname.split("/")[3];
+      const room = getRoom(code);
+      const players = [...room.players.values()]
+        .filter(p => p.role !== "teacher")
+        .map(p => ({ id: p.id, name: p.name, online: p.online }));
+      res.writeHead(200, {
+        "Content-Type": "application/json; charset=utf-8",
+        "Cache-Control": "no-store",
+        "Access-Control-Allow-Origin": "*"
+      });
+      res.end(JSON.stringify(players));
+      return;
+    }
+
     const requestPath = decodeURIComponent(url.pathname === "/" ? "/index.html" : url.pathname);
     const file = safeJoin(`.${requestPath}`);
     if (!file) {
@@ -286,7 +345,7 @@ function handleMessage(client, raw) {
     const room = getRoom(message.room);
     const id = String(message.playerId || crypto.randomUUID());
     const role = message.role === "teacher" ? "teacher" : "student";
-    const name = String(message.name || (role === "teacher" ? "Vyučující" : "Student")).trim().slice(0, 40);
+    const name = sanitizeName(message.name, role === "teacher" ? "Vyučující" : "Student");
     client.id = id;
     client.room = room;
     client.role = role;
@@ -300,7 +359,7 @@ function handleMessage(client, raw) {
     addEvent(room, { kind: "join", playerId: id, playerName: name, role });
     sendJson(client, { type: "hello:ok", playerId: id, room: room.code, serverTime: Date.now() });
     broadcast(room);
-    saveStats();
+    scheduleSave();
     return;
   }
 
@@ -313,9 +372,9 @@ function handleMessage(client, raw) {
 
   if (message.type === "player:update") {
     player.current = message.current || null;
-    player.name = String(message.name || player.name).trim().slice(0, 40);
+    player.name = sanitizeName(message.name || player.name, player.name);
     broadcast(room);
-    saveStats();
+    scheduleSave();
     return;
   }
 
@@ -333,7 +392,7 @@ function handleMessage(client, raw) {
       forgettingRisk: run.forgettingRisk
     });
     broadcast(room);
-    saveStats();
+    scheduleSave();
     return;
   }
 
@@ -347,7 +406,7 @@ function handleMessage(client, raw) {
     }
     addEvent(room, { kind: "reset", playerId: player.id, playerName: player.name, role: "teacher" });
     broadcast(room);
-    saveStats();
+    scheduleSave();
   }
 }
 
@@ -408,7 +467,7 @@ function closeClient(client) {
     }
   }
   broadcast(room);
-  saveStats();
+  scheduleSave();
 }
 
 const server = http.createServer(serveStatic);
@@ -444,5 +503,15 @@ server.on("upgrade", (req, socket) => {
   server.listen(PORT, HOST, () => {
     console.log(`Klementinum 2099 online běží na http://localhost:${PORT}`);
     console.log(`Dashboard učitele: http://localhost:${PORT}/?teacher=1`);
+    const addresses = getNetworkAddresses();
+    if (addresses.length) {
+      console.log(`\n--- Sdílení na lokální síti ---`);
+      for (const { name, address } of addresses) {
+        console.log(`  Studenti:  http://${address}:${PORT}/?room=KLEMENTINUM`);
+        console.log(`  Učitel:    http://${address}:${PORT}/?room=KLEMENTINUM&teacher=1`);
+        console.log(`  (síťové rozhraní: ${name})`);
+      }
+      console.log(`-------------------------------\n`);
+    }
   });
 })();

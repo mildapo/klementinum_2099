@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Edukační paměťový simulátor ÚISK UK – metoda Loci, multisenzorické kódování a aktivní vybavování.">
+<meta name="theme-color" content="#13100f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛</text></svg>">
 <title>Klementinum 2099 - Labyrint poznání</title>
 <style>
 :root{
@@ -221,12 +226,63 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
   .form-grid,.teacher-grid{grid-template-columns:1fr}
   .player-table{font-size:.78rem}
 }
+.share-panel{display:grid;gap:1rem;padding:1rem;border:1px solid rgba(255,255,255,.12);background:rgba(24,18,15,.85);box-shadow:var(--shadow)}
+.share-panel h3{margin:0;font-size:1.05rem;font-weight:950}
+.share-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:1rem}
+.share-card{padding:1rem;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);display:flex;flex-direction:column;align-items:center;gap:.75rem;text-align:center}
+.share-card .qr-label{font-size:.78rem;color:var(--muted);font-weight:850;text-transform:uppercase}
+.share-card .qr-wrap{background:#fff;padding:.5rem;display:inline-block;line-height:0}
+.share-card .qr-wrap canvas{image-rendering:pixelated}
+.share-card .qr-url{font-size:.72rem;color:#d9cbbb;word-break:break-all;line-height:1.4;max-width:18rem}
+.share-card .qr-copy-btn{min-height:2rem;padding:.35rem .65rem;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:var(--ink);font-weight:850;font-size:.78rem;cursor:pointer}
+.share-card .qr-copy-btn:hover{background:rgba(255,255,255,.14)}
+.qr-project-btn{min-height:2.4rem;padding:.5rem .85rem;border:1px solid rgba(251,191,36,.4);background:rgba(251,191,36,.12);color:#fbbf24;font-weight:900;font-size:.85rem;cursor:pointer}
+.qr-project-btn:hover{background:rgba(251,191,36,.22)}
+.qr-overlay{position:fixed;inset:0;z-index:100;background:#fff;display:grid;grid-template-columns:1fr 1fr;place-items:center;padding:2rem;gap:2rem}
+.qr-overlay .qr-overlay-card{display:flex;flex-direction:column;align-items:center;gap:1.2rem;text-align:center}
+.qr-overlay .qr-overlay-card h2{margin:0;color:#15100e;font-size:1.6rem}
+.qr-overlay .qr-overlay-card p{margin:0;color:#555;font-size:1rem;max-width:22rem}
+.qr-overlay .qr-overlay-card canvas{image-rendering:pixelated}
+.qr-overlay .qr-close{position:fixed;top:1rem;right:1rem;z-index:101;width:3rem;height:3rem;background:#15100e;color:#fbbf24;border:none;font-size:1.5rem;font-weight:900;cursor:pointer;display:grid;place-items:center}
+.net-loading{color:var(--muted);font-size:.82rem;font-style:italic}
+@media(max-width:640px){
+  .share-cards{grid-template-columns:1fr}
+  .qr-overlay{grid-template-columns:1fr;overflow-y:auto}
+}
 </style>
 </head>
 <body>
-<div id="app"></div>
+<div id="app"><div style="min-height:100vh;display:grid;place-items:center;background:#13100f;color:#fbbf24;font-size:1.6rem;font-weight:900;font-family:Inter,Segoe UI,sans-serif;text-align:center;padding:2rem">Klementinum 2099 – Načítám…</div></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script src="game-data.js"></script>
+<script src="qrcode.min.js"></script>
+<script>
+// Použití stabilní externí knihovny qrcode.js
+(function(){
+  function renderQR(canvas,text,moduleSize){
+    const wrap = canvas.parentElement;
+    const oldId = canvas.id;
+    wrap.innerHTML = ''; // Vyčištění předchozího canvasu
+    
+    // Velikost podle kontextu
+    const pxSize = (moduleSize === 6 || moduleSize === 8) ? 300 : 160;
+    
+    new QRCode(wrap, {
+      text: text,
+      width: pxSize,
+      height: pxSize,
+      colorDark : "#000000",
+      colorLight : "#ffffff",
+      correctLevel : QRCode.CorrectLevel.L
+    });
+    
+    // Obnovení id, aby navázaná logika (např. update při změně) našla prvek
+    const newEl = wrap.querySelector('canvas') || wrap.querySelector('img');
+    if(newEl) newEl.id = oldId;
+  }
+  window.renderQR=renderQR;
+})();
+</script>
 <script>
 (function(){
   const DATA = window.KLEMENTINUM_LEVELS || [];
@@ -261,7 +317,15 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
       status: "offline",
       socket: null,
       roomState: null,
-      lastError: ""
+      lastError: "",
+      _reconnectAttempts: 0,
+      _wantOnline: false
+    },
+    network: {
+      addresses: [],
+      port: 8787,
+      loaded: false,
+      loading: false
     }
   };
 
@@ -288,12 +352,12 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
   function loadOnlineSettings(){
     try{
       const saved = JSON.parse(localStorage.getItem(ONLINE_STORAGE_KEY) || "{}");
-      state.online.name = params.get("name") || saved.name || (state.online.role === "teacher" ? "Vyučující" : "Student");
+      state.online.name = params.get("name") || saved.name || (state.online.role === "teacher" ? "Vyučující" : "");
       state.online.room = (params.get("room") || saved.room || state.online.room || "KLEMENTINUM").toUpperCase();
       state.online.playerId = saved.playerId || cryptoId();
       state.localRuns = JSON.parse(localStorage.getItem(RUN_HISTORY_KEY) || "[]");
     }catch(err){
-      state.online.name = state.online.role === "teacher" ? "Vyučující" : "Student";
+      state.online.name = state.online.role === "teacher" ? "Vyučující" : "";
       state.online.playerId = cryptoId();
       state.localRuns = [];
     }
@@ -379,11 +443,14 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
 
   function render(){
     if(state.view !== "boss") stopTimer();
+    if(state.view === "login") return renderLogin();
     if(state.view === "levels") renderLevels();
     if(state.view === "explore") renderExplore();
     if(state.view === "boss") renderBoss();
     if(state.view === "result") renderResult();
     if(state.view === "teacher") renderTeacherDashboard();
+    // Inicializuj QR kódy po každém renderu
+    initQRCanvases();
   }
 
   function connectionLabel(){
@@ -392,11 +459,18 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
     return state.online.lastError || "Offline režim";
   }
 
-  function shareUrl(role){
+  function shareUrl(role, useIp){
     const url = new URL(location.href);
     if(location.protocol === "file:") {
       url.protocol = "http:";
       url.host = "localhost:8787";
+      url.pathname = "/";
+    }
+    // Pokud máme LAN IP, použijeme ji pro sdílení
+    if(useIp && state.network.addresses.length) {
+      url.protocol = "http:";
+      url.hostname = state.network.addresses[0].address;
+      url.port = String(state.network.port);
       url.pathname = "/";
     }
     url.search = "";
@@ -405,13 +479,104 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
     return url.toString();
   }
 
+  function fetchNetworkInfo(){
+    if(state.network.loaded || state.network.loading) return;
+    state.network.loading = true;
+    const apiBase = (location.protocol === "file:") ? "http://localhost:8787" : "";
+    fetch(apiBase + "/api/network-info")
+      .then(r => r.json())
+      .then(info => {
+        state.network.addresses = info.addresses || [];
+        state.network.port = info.port || 8787;
+        state.network.loaded = true;
+        state.network.loading = false;
+        // Re-render QR kódy
+        if(state.view === "levels" || state.view === "teacher") render();
+      })
+      .catch(() => { state.network.loading = false; });
+  }
+
+  function renderQRCards(){
+    const hasIp = state.network.addresses.length > 0;
+    const studentUrl = shareUrl("student", hasIp);
+    const teacherUrl = shareUrl("teacher", hasIp);
+    const isCollapsed = !!state.qrCollapsed;
+    
+    return `
+      <div class="share-panel" id="share-panel">
+        <div class="share-panel-header" data-action="toggle-qr" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; margin-bottom:${isCollapsed ? '0' : '1.5rem'}">
+          <h3 style="margin:0; color:#fbbf24; font-size:1.4rem; text-align:left;">📱 QR kódy pro sdílení na lokální síti</h3>
+          <span style="font-size:1.2rem; color:#888; padding-left:1rem;">${isCollapsed ? '▼ Zobrazit' : '▲ Skrýt'}</span>
+        </div>
+        ${isCollapsed ? '' : `
+        ${!hasIp ? '<div class="net-loading">Zjišťuji IP adresu serveru…</div>' : ''}
+        <div class="share-cards">
+          <div class="share-card">
+            <span class="qr-label">👨‍🎓 Studenti</span>
+            <div class="qr-wrap"><canvas id="qr-student" data-qr-url="${h(studentUrl)}"></canvas></div>
+            <div class="qr-url">${h(studentUrl)}</div>
+            <button class="qr-copy-btn" data-action="copy-url" data-url="${h(studentUrl)}">📋 Kopírovat URL</button>
+          </div>
+          <div class="share-card">
+            <span class="qr-label">👩‍🏫 Učitel</span>
+            <div class="qr-wrap"><canvas id="qr-teacher" data-qr-url="${h(teacherUrl)}"></canvas></div>
+            <div class="qr-url">${h(teacherUrl)}</div>
+            <button class="qr-copy-btn" data-action="copy-url" data-url="${h(teacherUrl)}">📋 Kopírovat URL</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:.55rem;flex-wrap:wrap;margin-top:.25rem">
+          <button class="qr-project-btn" data-action="project-qr">📽 Promítat QR kódy na celou obrazovku</button>
+        </div>
+        `}
+      </div>`;
+  }
+
+  function initQRCanvases(){
+    requestAnimationFrame(() => {
+      document.querySelectorAll('canvas[data-qr-url]').forEach(canvas => {
+        const url = canvas.dataset.qrUrl;
+        if(url && window.renderQR) window.renderQR(canvas, url, canvas.id.includes('overlay') ? 6 : 4);
+      });
+    });
+  }
+
+  function showQROverlay(){
+    const hasIp = state.network.addresses.length > 0;
+    const studentUrl = shareUrl("student", hasIp);
+    const teacherUrl = shareUrl("teacher", hasIp);
+    const overlay = document.createElement('div');
+    overlay.className = 'qr-overlay';
+    overlay.id = 'qr-overlay';
+    overlay.innerHTML = `
+      <button class="qr-close" id="qr-overlay-close">✕</button>
+      <div class="qr-overlay-card">
+        <h2>👨‍🎓 Studenti</h2>
+        <div class="qr-wrap"><canvas id="qr-overlay-student" data-qr-url="${studentUrl}"></canvas></div>
+        <p>${studentUrl}</p>
+      </div>
+      <div class="qr-overlay-card">
+        <h2>👩‍🏫 Učitel</h2>
+        <div class="qr-wrap"><canvas id="qr-overlay-teacher" data-qr-url="${teacherUrl}"></canvas></div>
+        <p>${teacherUrl}</p>
+      </div>`;
+    document.body.appendChild(overlay);
+    document.getElementById('qr-overlay-close').addEventListener('click', () => overlay.remove());
+    overlay.addEventListener('click', e => { if(e.target === overlay) overlay.remove(); });
+    requestAnimationFrame(() => {
+      const sc = overlay.querySelector('#qr-overlay-student');
+      const tc = overlay.querySelector('#qr-overlay-teacher');
+      if(sc && window.renderQR) window.renderQR(sc, studentUrl, 8);
+      if(tc && window.renderQR) window.renderQR(tc, teacherUrl, 8);
+    });
+  }
+
   function renderLiveLeaderboard(limit = 5){
     const board = state.online.roomState?.leaderboard || [];
     if(!board.length) return `<div class="share-line">Až se připojí studenti, objeví se tady živý žebříček.</div>`;
     return `<div class="live-list">${board.slice(0, limit).map((player, index) => `
       <div class="leader-row">
         <span class="rank-badge">${index + 1}</span>
-        <div><strong>${h(player.name)}</strong><small>${h(player.current?.phase || (player.online ? "online" : "offline"))}</small></div>
+        <div><strong>${h(player.name)}</strong><small>${player.online ? h(player.current?.phase || "online") : "offline"}</small></div>
         <span class="score-badge">${h(player.totals.score)}</span>
       </div>`).join("")}</div>`;
   }
@@ -434,7 +599,7 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
           <button class="ghost" data-action="disconnect-online">Odpojit</button>
           <button class="ghost" data-action="teacher-view">Dashboard učitele</button>
         </div>
-        <div class="share-line">Studenti: ${h(studentUrl)}<br>Učitel: ${h(teacherUrl)}</div>
+        ${renderQRCards()}
         ${renderLiveLeaderboard(5)}
       </section>`;
   }
@@ -460,6 +625,7 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
     state.online.role = role;
     state.online.connecting = true;
     state.online.lastError = "";
+    state.online._wantOnline = true;
     if(state.view === "levels" || state.view === "teacher") render();
     try{
       const socket = new WebSocket(websocketUrl());
@@ -467,6 +633,7 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
       socket.addEventListener("open", () => {
         state.online.connected = true;
         state.online.connecting = false;
+        state.online._reconnectAttempts = 0;
         sendOnline("hello", {
           room: state.online.room,
           name: state.online.name,
@@ -484,6 +651,7 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
         state.online.connecting = false;
         state.online.status = "offline";
         if(state.view === "levels" || state.view === "teacher") render();
+        scheduleReconnect();
       });
       socket.addEventListener("error", () => {
         if(state.online.socket !== socket) return;
@@ -500,7 +668,25 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
     }
   }
 
+  function scheduleReconnect(){
+    if(!state.online._wantOnline) return;
+    if(state.online._reconnectAttempts >= 8) {
+      state.online.lastError = "Nelze se připojit, zkuste to ručně.";
+      if(state.view === "levels" || state.view === "teacher") render();
+      return;
+    }
+    const delay = Math.min(1000 * Math.pow(2, state.online._reconnectAttempts), 30000);
+    state.online._reconnectAttempts += 1;
+    setTimeout(() => {
+      if(state.online._wantOnline && !state.online.connected) {
+        connectOnline(state.online.role);
+      }
+    }, delay);
+  }
+
   function disconnectOnline(show = true){
+    state.online._wantOnline = false;
+    state.online._reconnectAttempts = 0;
     if(state.online.socket){
       try{ state.online.socket.close(); }catch(err){}
     }
@@ -557,6 +743,62 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
       name: state.online.name,
       current: currentOnlineStatus(phase)
     });
+  }
+
+  async function handleLoginSubmit() {
+    const input = document.getElementById("login-name-input");
+    const name = input.value.trim();
+    if (!name) return;
+    
+    const btn = document.getElementById("login-submit-btn");
+    btn.disabled = true;
+    btn.textContent = "Připojuji se...";
+    
+    try {
+      const room = state.online.room || "KLEMENTINUM";
+      const res = await fetch("/api/room/" + encodeURIComponent(room) + "/players");
+      if(res.ok) {
+        const players = await res.json();
+        const existing = players.find(p => p.name.toLowerCase() === name.toLowerCase());
+        
+        if (existing) {
+          if(confirm("Hráč se jménem \\"" + existing.name + "\\" už v místnosti existuje.\\n\\nChceš se připojit k jeho profilu a pokračovat v jeho hře?")) {
+            state.online.name = existing.name;
+            state.online.playerId = existing.id;
+          } else {
+            btn.disabled = false;
+            btn.textContent = "Vstoupit do hry";
+            return;
+          }
+        } else {
+          state.online.name = name;
+        }
+      } else {
+        state.online.name = name;
+      }
+    } catch(e) {
+       state.online.name = name;
+    }
+    
+    saveOnlineSettings();
+    state.view = "levels";
+    connectOnline("student");
+  }
+
+  function renderLogin() {
+    app.innerHTML = \`
+      <div class="header">
+        <h1>Vítejte v Klementinu 2099</h1>
+      </div>
+      <div class="result-card" style="max-width: 450px; margin: 4rem auto; text-align: center; background: #1a1614; padding: 2rem; border-radius: 12px; border: 1px solid #332b27;">
+        <h2>Zadej své jméno</h2>
+        <p style="color:#aaa; font-size:1rem; margin-bottom: 2rem;">Pod tímto jménem tě uvidí vyučující na tabuli.</p>
+        <form data-action="submit-name" style="display:flex; flex-direction:column; gap: 1rem;">
+          <input type="text" id="login-name-input" placeholder="Tvoje jméno..." required maxlength="30" style="padding:0.8rem; font-size:1.2rem; border-radius:8px; border:1px solid #332b27; background:#13100f; color:#fbbf24; text-align:center;">
+          <button type="submit" class="primary-btn" id="login-submit-btn" style="font-size:1.2rem;">Vstoupit do hry</button>
+        </form>
+      </div>
+    \`;
   }
 
   function renderLevels(){
@@ -658,7 +900,7 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
       const delta = player.delta || {};
       return `<tr>
         <td><strong>${h(player.name)}</strong><br><small>${player.online ? "online" : "offline"}</small></td>
-        <td>${h(current.phase || "čeká")}<br><small>L${h(current.levelId || "-")} · ${h(current.roomIndex || 0)}/${h(current.roomsTotal || 7)}</small></td>
+        <td>${player.online ? h(current.phase || "online") : "offline"}<br><small>L${h(current.levelId || "-")} · ${h(current.roomIndex || 0)}/${h(current.roomsTotal || 7)}</small></td>
         <td>${h(player.runs?.length || 0)}</td>
         <td>${h(last.score || 0)}<br><small>${deltaHtml(delta.score || null)}</small></td>
         <td>${h(last.accuracy || 0)} %<br><small>${deltaHtml(delta.accuracy || null, " b")}</small></td>
@@ -698,7 +940,7 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
             <label class="field"><span>Jméno učitele</span><input class="text-input" data-role="online-name" value="${h(state.online.name)}"></label>
             <label class="field"><span>Místnost</span><input class="text-input" data-role="online-room" value="${h(state.online.room)}"></label>
           </div>
-          <div class="share-line">Sdílet studentům: ${h(shareUrl("student"))}</div>
+          ${renderQRCards()}
         </section>
         <section class="teacher-grid">
           <div class="metric"><strong>${h(room.activeStudents || 0)}</strong><span>aktivních studentů</span></div>
@@ -977,7 +1219,7 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
   }
 
   function startBossClock(){
-    stopTimer();
+    if(timerId) return;
     updateBossClock();
     timerId = setInterval(updateBossClock, 180);
   }
@@ -1225,9 +1467,34 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
     if(action === "disconnect-online") disconnectOnline(true);
     if(action === "teacher-reset") sendOnline("teacher:reset");
     if(action === "export-csv") exportToCSV();
+    if(action === "copy-url"){
+      const url = target.dataset.url;
+      if(url && navigator.clipboard){
+        navigator.clipboard.writeText(url).then(() => showToast("URL zkopírováno do schránky.")).catch(() => showToast("Nelze zkopírovat."));
+      } else if(url){
+        // Fallback pro starší prohlížeče
+        const ta = document.createElement('textarea');
+        ta.value = url;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast("URL zkopírováno.");
+      }
+    }
+    if(action === "project-qr") showQROverlay();
+    if(action === "toggle-qr") {
+      state.qrCollapsed = !state.qrCollapsed;
+      render();
+    }
   });
 
   app.addEventListener("submit", event => {
+    if(event.target.matches("[data-action='submit-name']")){
+      event.preventDefault();
+      handleLoginSubmit();
+      return;
+    }
     if(event.target.matches("[data-role='answer-form']")){
       event.preventDefault();
       submitTyped(event.target);
@@ -1237,7 +1504,18 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
   loadProgress();
   loadOnlineSettings();
   if(state.online.role === "teacher") state.view = "teacher";
+  fetchNetworkInfo();
   render();
+
+  // Auto-connect pokud URL obsahuje parametr room nebo teacher
+  if(params.has("room") || params.has("teacher")) {
+    if(state.online.role === "student" && !state.online.name) {
+      state.view = "login";
+      render();
+    } else {
+      setTimeout(() => connectOnline(state.online.role), 350);
+    }
+  }
 })();
 </script>
 </body>
