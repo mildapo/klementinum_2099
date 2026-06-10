@@ -584,6 +584,37 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
       </div>`).join("")}</div>`;
   }
 
+  function renderMotivationalBoard(){
+    const players = state.online.roomState?.players || [];
+    const onlineStudents = players.filter(p => p.role !== "teacher" && p.online);
+    
+    if(!onlineStudents.length) return `<div class="share-line">Zatím tu nikdo není. Zkus se připojit!</div>`;
+    
+    onlineStudents.sort((a, b) => {
+       const memA = a.lastRun?.memoryIndex || 0;
+       const memB = b.lastRun?.memoryIndex || 0;
+       if (memA !== memB) return memB - memA;
+       return (b.totals?.score || 0) - (a.totals?.score || 0);
+    });
+
+    return `<div class="live-list">${onlineStudents.map(player => {
+      const memory = player.lastRun?.memoryIndex || 0;
+      const memIcon = memory >= 80 ? "🔥" : (memory >= 50 ? "⭐" : "🌱");
+      const levelId = player.current?.levelId || "-";
+      return \`
+      <div class="leader-row" style="align-items:center;">
+        <span class="rank-badge" style="background:transparent; border:1px solid #332b27; color:#fbbf24; font-size:1.2rem;">🟢</span>
+        <div style="flex:1; text-align:left;">
+          <strong>\${h(player.name)}</strong>
+          <small>Úroveň \${h(levelId)}</small>
+        </div>
+        <span class="score-badge" style="background:#1a1614; color:#fbbf24; border:1px solid #332b27; padding:0.4rem 0.6rem; display:flex; align-items:center; gap:0.4rem;">
+          \${memIcon} \${h(memory)} <small style="opacity:0.6; font-size:0.7rem;">Paměť</small>
+        </span>
+      </div>\`;
+    }).join("")}</div>`;
+  }
+
   function renderOnlinePanel(){
     const studentUrl = shareUrl("student");
     const teacherUrl = shareUrl("teacher");
@@ -603,7 +634,8 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
           <button class="ghost" data-action="teacher-view">Dashboard učitele</button>
         </div>
         ${renderQRCards()}
-        ${renderLiveLeaderboard(5)}
+        <h3 style="margin-top:1.5rem;">Návštěvníci paměťového paláce</h3>
+        ${renderMotivationalBoard()}
       </section>`;
   }
 
@@ -1123,7 +1155,7 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
         </article>
         <aside class="side-panel">
           <div class="codex-list"><h3>Paměťové kotvy</h3>${memoryItems}</div>
-          ${state.online.connected ? `<div class="online-panel"><h3>Živá soutěž</h3>${renderLiveLeaderboard(6)}</div>` : ""}
+          ${state.online.connected ? `<div class="online-panel"><h3>Návštěvníci paměťového paláce</h3>${renderMotivationalBoard()}</div>` : ""}
         </aside>
       </section>`);
   }
@@ -1214,7 +1246,7 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
               <button class="ghost" data-action="show-options" ${boss.locked || boss.showOptions ? "disabled" : ""}>Nápověda</button>
               ${options}
               ${result}
-              ${state.online.connected ? `<div class="online-panel"><h3>Živý žebříček místnosti</h3>${renderLiveLeaderboard(5)}</div>` : ""}
+              ${state.online.connected ? `<div class="online-panel"><h3>Návštěvníci paměťového paláce</h3>${renderMotivationalBoard()}</div>` : ""}
             </div>
           </div>
           <div class="boss-foot"><span>HP monstra: ${h(boss.monsterHp)}</span><span class="combo">Combo ${h(boss.combo)}</span><span>Skóre ${h(boss.score)}</span></div>
