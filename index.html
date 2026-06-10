@@ -1499,7 +1499,7 @@ if ('serviceWorker' in navigator) {
     const players = Object.values(state.online.roomState.players);
     if(players.length === 0) return showToast("Žádná data pro export.");
     
-    let csv = "Hrac,Stav,Pokusy,Skore,Presnost,PocetChyb,IndexPameti,RizikoZapominani\n";
+    let csv = "Hráč;Stav;Pokusy;Skóre;Přesnost;Počet chyb;Index paměti;Riziko zapomínání\n";
     players.forEach(p => {
       const isOnline = Date.now() - p.lastSeen < 12000;
       const status = isOnline ? "Online" : "Offline";
@@ -1509,10 +1509,10 @@ if ('serviceWorker' in navigator) {
       const memIndex = p.lastRun?.memoryIndex || 0;
       const risk = p.lastRun?.forgettingRisk || 0;
       const totalMisses = p.totals?.misses || 0;
-      csv += `${p.name},${status},${totalRuns},${totalScore},${accuracy}%,${totalMisses},${memIndex},${risk}\n`;
+      csv += `${p.name};${status};${totalRuns};${totalScore};${accuracy}%;${totalMisses};${memIndex};${risk}\n`;
     });
     
-    const blob = new Blob([csv], {type: "text/csv;charset=utf-8;"});
+    const blob = new Blob(["\uFEFF" + csv], {type: "text/csv;charset=utf-8;"});
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
