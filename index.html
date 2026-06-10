@@ -571,7 +571,10 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
   }
 
   function renderLiveLeaderboard(limit = 5){
-    const board = state.online.roomState?.leaderboard || [];
+    let board = state.online.roomState?.leaderboard || [];
+    if(state.online.filterOnlineOnly) {
+      board = board.filter(p => p.online);
+    }
     if(!board.length) return `<div class="share-line">Až se připojí studenti, objeví se tady živý žebříček.</div>`;
     return `<div class="live-list">${board.slice(0, limit).map((player, index) => `
       <div class="leader-row">
@@ -891,7 +894,10 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
   function renderTeacherDashboard(){
     state.online.role = "teacher";
     const room = state.online.roomState || { code: state.online.room, classStats: {}, players: [], leaderboard: [], events: [] };
-    const players = (room.players || []).filter(player => player.role !== "teacher");
+    let players = (room.players || []).filter(player => player.role !== "teacher");
+    if(state.online.filterOnlineOnly) {
+      players = players.filter(p => p.online);
+    }
     const classStats = room.classStats || {};
     const weak = conceptWeakness(players);
     const rows = players.length ? players.map(player => {
@@ -930,6 +936,7 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
           </div>
           <div class="online-actions">
             <button class="primary" data-action="connect-teacher">${state.online.connected ? "Obnovit dashboard" : "Připojit dashboard"}</button>
+            <button class="ghost" data-action="toggle-online-filter">${state.online.filterOnlineOnly ? "Zobrazit všechny studenty" : "Zobrazit online studenty"}</button>
             <button class="ghost" data-action="export-csv">Exportovat CSV</button>
             <button class="ghost" data-action="teacher-reset">Vyčistit statistiky</button>
             <button class="ghost" data-action="levels">Studentský pohled</button>
@@ -1485,6 +1492,10 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
     if(action === "project-qr") showQROverlay();
     if(action === "toggle-qr") {
       state.qrCollapsed = !state.qrCollapsed;
+      render();
+    }
+    if(action === "toggle-online-filter") {
+      state.online.filterOnlineOnly = !state.online.filterOnlineOnly;
       render();
     }
   });
