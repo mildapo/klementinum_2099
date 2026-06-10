@@ -2,6 +2,8 @@
 
 Edukační paměťový simulátor a hra pro ÚISK UK na motivy metody Loci, multisenzorického kódování a aktivního vybavování.
 
+▶️ **Představení projektu a videonávod:** [Sledujte na YouTube](https://youtu.be/Q0y2EopNNyo?si=l5SZy7nzlySgmWO7)
+
 ## Jak spustit hru přímo z prostředí GitHubu
 
 Máte dvě možnosti, jak hru a lokální server spustit na svém počítači:
