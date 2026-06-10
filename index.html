@@ -601,17 +601,17 @@ h1{margin:0;font-size:3rem;line-height:1.02;font-weight:950;max-width:10ch}
       const memory = player.lastRun?.memoryIndex || 0;
       const memIcon = memory >= 80 ? "🔥" : (memory >= 50 ? "⭐" : "🌱");
       const levelId = player.current?.levelId || "-";
-      return \`
+      return `
       <div class="leader-row" style="align-items:center;">
         <span class="rank-badge" style="background:transparent; border:1px solid #332b27; color:#fbbf24; font-size:1.2rem;">🟢</span>
         <div style="flex:1; text-align:left;">
-          <strong>\${h(player.name)}</strong>
-          <small>Úroveň \${h(levelId)}</small>
+          <strong>${h(player.name)}</strong>
+          <small>Úroveň ${h(levelId)}</small>
         </div>
         <span class="score-badge" style="background:#1a1614; color:#fbbf24; border:1px solid #332b27; padding:0.4rem 0.6rem; display:flex; align-items:center; gap:0.4rem;">
-          \${memIcon} \${h(memory)} <small style="opacity:0.6; font-size:0.7rem;">Paměť</small>
+          ${memIcon} ${h(memory)} <small style="opacity:0.6; font-size:0.7rem;">Paměť</small>
         </span>
-      </div>\`;
+      </div>`;
     }).join("")}</div>`;
   }
 
